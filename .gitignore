@@ -1,0 +1,29 @@
+# OS Specific
+.DS_Store
+**/.DS_Store
+
+# Environment / Secrets
+.env
+.env.*
+!.env.*.example
+
+# Python
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv_agentmail/
+.venv/
+venv/
+env/
+
+# Logs
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# Skills
+.system/
