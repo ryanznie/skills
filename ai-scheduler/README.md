@@ -11,14 +11,14 @@ Example:
 
 ```sh
 . .venv_agentmail/bin/activate
-.venv_agentmail/bin/python ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
-  --topic "Fundraising" \
-  --chat-topic "$5M startup fundraising" \
-  --to "Ry <ryanznie@bu.edu>" \
-  --cc "ryanznie@gatech.edu" \
-  --start "2026-03-15 21:00" \
+python ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
+  --topic "Project Sync" \
+  --chat-topic "Bi-weekly project update and roadmap discussion" \
+  --to "Jane Doe <jane.doe@example.com>" \
+  --cc "team-leads@example.com" \
+  --start "2026-03-15 14:00" \
   --tz "America/New_York" \
-  --duration 20
+  --duration 30
 ```
 
 ## Zoom Credentials
