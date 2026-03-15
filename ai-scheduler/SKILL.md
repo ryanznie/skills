@@ -24,6 +24,7 @@ Use the bundled script to (a) create a Zoom meeting via API, and/or (b) send an 
   - plain emails: `--to "person@example.com"`
   - display name + email: `--to "Ry <person@example.com>"`
 - Host display name (default: `Ryan Z. Nie`)
+- Host email (optional; set `AGENTMAIL_HOST`, otherwise defaults to `AGENTMAIL_INBOX_ID`)
 
 ## Credentials (do not paste secrets into chat)
 
@@ -37,7 +38,7 @@ Use the bundled script to (a) create a Zoom meeting via API, and/or (b) send an 
 
 Preferred: set env vars in the environment running the script.
 
-Optional: put env vars in a local `.env.zoom` file in the working directory (the script reads it and only fills missing env vars):
+Optional: put env vars in `ai-scheduler/.env.scheduler` (default), or pass a custom path via `--env-file`. The script reads the env file and only fills missing env vars. Treat the values below as placeholders and keep the real values in `ai-scheduler/.env.scheduler`.
 
 ```bash
 ZOOM_ACCOUNT_ID=...
@@ -47,7 +48,7 @@ AGENTMAIL_API_KEY=...
 AGENTMAIL_INBOX_ID=ryanznie@agentmail.to
 AGENTMAIL_INBOX_DISPLAY_NAME=Ryan Nie's AI Agent
 AGENTMAIL_HOST_NAME=Ryan Nie's AI Agent
-AGENTMAIL_ALWAYS_CC=ryanznie@gatech.edu
+AGENTMAIL_HOST=host@example.com
 AGENTMAIL_SUBJECT_PREFIX=Ryan +
 ```
 

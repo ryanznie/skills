@@ -488,11 +488,16 @@ def build_zoom_style_body_text(
 
 
 def parse_args() -> argparse.Namespace:
+    skill_dir = Path(__file__).resolve().parents[1]
+    default_env_file = skill_dir / ".env.scheduler"
+    legacy_env_file = skill_dir / ".env.zoom"
+    if not default_env_file.exists() and legacy_env_file.exists():
+        default_env_file = legacy_env_file
     p = argparse.ArgumentParser(description="Create a Zoom meeting via API and email a calendar invite via AgentMail.")
     p.add_argument(
         "--env-file",
-        default=".env.zoom",
-        help="Optional .env-style file to source (only fills missing env vars). Default: .env.zoom",
+        default=str(default_env_file),
+        help="Optional .env-style file to source (only fills missing env vars). Default: ai-scheduler/.env.scheduler",
     )
     p.add_argument("--topic", default="Zoom Meeting", help="Meeting topic (used for Zoom title + email subject).")
     p.add_argument("--chat-topic", default=None, help="Optional: included in the email body as the meeting topic.")
@@ -552,14 +557,14 @@ def main() -> None:
         raise SystemExit("At least one --to email is required.")
     cc_raw = ",".join(args.cc_emails or [])
     cc_participants = parse_participants(cc_raw)
-    always_cc_raw = os.environ.get("AGENTMAIL_ALWAYS_CC")
-    always_cc_participants = parse_participants(always_cc_raw)
-    cc_participants = merge_participants(cc_participants, always_cc_participants)
+    host_email_raw = (os.environ.get("AGENTMAIL_HOST") or "").strip()
+    host_participants = parse_participants(host_email_raw)
+    cc_participants = merge_participants(cc_participants, host_participants)
 
     subject_prefix = (args.subject_prefix or os.environ.get("AGENTMAIL_SUBJECT_PREFIX") or "").strip()
     if not subject_prefix:
         raise SystemExit(
-            "Missing subject prefix. Set AGENTMAIL_SUBJECT_PREFIX in .env.zoom (or pass --subject-prefix)."
+            "Missing subject prefix. Set AGENTMAIL_SUBJECT_PREFIX in ai-scheduler/.env.scheduler (or pass --subject-prefix)."
         )
     host_name = (
         (args.host_name or "").strip()
@@ -621,6 +626,7 @@ def main() -> None:
         return
 
     inbox_id = _get_env("AGENTMAIL_INBOX_ID")
+    host_email = host_participants[0].email if host_participants else inbox_id
 
     print_confirmation_summary(
         from_email=inbox_id,
@@ -637,7 +643,7 @@ def main() -> None:
         topic=topic,
         chat_topic=args.chat_topic,
         host_name=host_name,
-        host_email=inbox_id,
+        host_email=host_email,
         to_participants=to_participants,
         cc_participants=cc_participants,
         start_local=start_local,
@@ -656,7 +662,7 @@ def main() -> None:
         confirm_or_exit()
 
     ics = build_ics(
-        organizer_email=inbox_id,
+        organizer_email=host_email,
         organizer_name=host_name,
         to_participants=to_participants,
         cc_participants=cc_participants,
