@@ -1,9 +1,9 @@
 ---
-name: zoom-agentmail-invite
+name: ai-scheduler
 description: Schedule Zoom meetings via the Zoom API (Server-to-Server OAuth) or reuse an existing Zoom join URL, then email calendar invites (.ics) via AgentMail with a standardized “Zoom Meeting Invitation” body (topic, participants, date/time, join link, meeting ID, passcode, disclaimer). Use when an agent needs to create/send Zoom calendar invites, CC participants, or automate meeting scheduling + invite delivery.
 ---
 
-# Zoom + AgentMail Meeting Invites
+# AI Scheduler (Zoom + AgentMail)
 
 Use the bundled script to (a) create a Zoom meeting via API, and/or (b) send an AgentMail email with an `.ics` invite attachment and the standard invitation body.
 
@@ -57,7 +57,7 @@ Create a meeting via Zoom API, then email an invite:
 
 ```bash
 . .venv_agentmail/bin/activate
-.venv_agentmail/bin/python zoom-agentmail-invite/scripts/schedule_zoom_and_send_invite.py \
+.venv_agentmail/bin/python ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
   --topic "AgentMail" \
   --chat-topic "<Topic>" \
   --to "participant1@example.com" \
@@ -71,7 +71,7 @@ Reuse an existing Zoom meeting (skip Zoom API) and just send the invite email:
 
 ```bash
 . .venv_agentmail/bin/activate
-.venv_agentmail/bin/python zoom-agentmail-invite/scripts/schedule_zoom_and_send_invite.py \
+.venv_agentmail/bin/python ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
   --topic "AgentMail" \
   --chat-topic "<Topic>" \
   --to "participant1@example.com" \
