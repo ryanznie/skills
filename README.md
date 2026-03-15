@@ -1,9 +1,9 @@
 # skills
 
-Canonical home for my Codex agent skills.
+Home for my AI agent skills.
 
 ## Layout
-- Each skill lives in a top-level folder (e.g. `review-target/`) with a `SKILL.md`.
+- Each skill lives in a top-level folder (e.g. `ai-scheduler/`) with a `SKILL.md`.
 - System skills live in `.system/`.
 
 ## Featured skill: `ai-scheduler`
@@ -11,6 +11,7 @@ Schedules Zoom meetings and emails `.ics` invites via AgentMail.
 
 - Skill docs: `ai-scheduler/SKILL.md`
 - Script: `ai-scheduler/scripts/schedule_zoom_and_send_invite.py`
+- Env file: `ai-scheduler/.env.scheduler` (copy from `ai-scheduler/.env.scheduler.example`)
 
 Example:
 
