@@ -7,10 +7,24 @@ Schedules Zoom meetings and emails `.ics` invites via AgentMail.
 - Script: `ai-scheduler/scripts/schedule_zoom_and_send_invite.py`
 - Env file: `ai-scheduler/.env.scheduler` (copy from `ai-scheduler/.env.scheduler.example`)
 
+### Setup Environment
+Create and activate a virtual environment using `uv`:
+
+```sh
+# Create a virtual environment
+uv venv .venv_scheduler
+
+# Activate the virtual environment
+source .venv_scheduler/bin/activate
+
+# Install dependencies
+uv pip install httpx agentmail
+```
+
 Example:
 
 ```sh
-. .venv_agentmail/bin/activate
+source .venv_scheduler/bin/activate
 python ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
   --topic "Project Sync" \
   --chat-topic "Bi-weekly project update and roadmap discussion" \
