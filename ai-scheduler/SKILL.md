@@ -11,8 +11,9 @@ Use the bundled script to (a) create a Zoom meeting via API, and/or (b) send an 
 
 - Keep the email professional and minimal.
 - Always show a full email preview (subject + body) before sending, then confirm (before sending) the host email (From), meeting time (with timezone), and participants (To/CC). The script prints a full email body preview before sending (even with `--yes`).
-- Subject rule: if there is exactly 1 `--to` recipient, use `<PREFIX> <TO_NAME>: <TOPIC>` (prefer the display name if provided). `<PREFIX>` must be provided via `AGENTMAIL_SUBJECT_PREFIX` or `--subject-prefix`. The script compacts `<TOPIC>` to at most 5 words.
+- Subject rule: if there is exactly 1 `--to` recipient, use `<PREFIX> <TO_NAME>: <TOPIC>` (prefer the display name if provided). `<PREFIX>` must be provided via env `AGENTMAIL_SUBJECT_PREFIX` (loaded from `.env.scheduler`) or `--subject-prefix`. The script compacts `<TOPIC>` to at most 5 words.
 - To disable the prefix, pass `--no-subject-prefix` (subject becomes `<TO_NAME>: <TOPIC>` for a single recipient, else `<TOPIC>`).
+- To force the subject to be just the topic (no `<TO_NAME>:`), pass `--subject-topic-only` (works with or without a subject prefix).
 - Zoom meeting title rule: most punctuation is stripped/simplified for the Zoom meeting title sent to the Zoom API (email subject/body keep your original punctuation).
 
 ## Required inputs
