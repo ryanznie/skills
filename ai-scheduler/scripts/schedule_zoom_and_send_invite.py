@@ -131,6 +131,14 @@ def format_subject(*, topic: str, to_participants: list[Participant], subject_pr
     return compact
 
 
+def format_subject_topic_only(*, topic: str, subject_prefix: str | None) -> str:
+    compact = compact_topic(topic, max_words=5)
+    prefix = (subject_prefix or "").strip()
+    if prefix:
+        return f"{prefix} {compact}"
+    return compact
+
+
 def sanitize_zoom_topic(value: str) -> str:
     allowed_punct = {"+", ":", "$", "-", "–", "—", "·", "&", "'", "(", ")"}
     cleaned = []
@@ -511,12 +519,17 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--subject-prefix",
         default=None,
-        help='Optional subject prefix (default: env AGENTMAIL_SUBJECT_PREFIX, else "Ryan +").',
+        help="Optional subject prefix (default: env AGENTMAIL_SUBJECT_PREFIX).",
     )
     p.add_argument(
         "--no-subject-prefix",
         action="store_true",
         help="Do not use a subject prefix (ignores AGENTMAIL_SUBJECT_PREFIX / --subject-prefix).",
+    )
+    p.add_argument(
+        "--subject-topic-only",
+        action="store_true",
+        help="Use a topic-only subject (no \"<TO_NAME>:\" prefix), regardless of recipient count.",
     )
     p.add_argument(
         "--to",
@@ -584,7 +597,10 @@ def main() -> None:
         or "Ryan Z. Nie"
     )
     topic = normalize_topic(args.topic, subject_prefix=subject_prefix)
-    subject = format_subject(topic=topic, to_participants=to_participants, subject_prefix=subject_prefix)
+    if args.subject_topic_only:
+        subject = format_subject_topic_only(topic=topic, subject_prefix=subject_prefix)
+    else:
+        subject = format_subject(topic=topic, to_participants=to_participants, subject_prefix=subject_prefix)
 
     tz = ZoneInfo(args.timezone_name)
     if args.start:
