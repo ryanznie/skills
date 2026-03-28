@@ -99,7 +99,7 @@ def merge_participants(primary: list[Participant], extra: list[Participant]) -> 
     return merged
 
 
-def normalize_topic(topic: str, *, subject_prefix: str) -> str:
+def normalize_topic(topic: str, *, subject_prefix: str | None) -> str:
     t = (topic or "").strip()
     if not t:
         return "Zoom Meeting"
@@ -118,15 +118,17 @@ def compact_topic(topic: str, *, max_words: int = 5) -> str:
     return " ".join(words[:max_words])
 
 
-def format_subject(*, topic: str, to_participants: list[Participant], subject_prefix: str) -> str:
+def format_subject(*, topic: str, to_participants: list[Participant], subject_prefix: str | None) -> str:
     compact = compact_topic(topic, max_words=5)
     prefix = (subject_prefix or "").strip()
-    if not prefix:
-        raise ValueError("subject_prefix must be non-empty")
     if len(to_participants) == 1:
         display = to_participants[0].name or to_participants[0].email
-        return f"{prefix} {display}: {compact}"
-    return f"{prefix} {compact}"
+        if prefix:
+            return f"{prefix} {display}: {compact}"
+        return f"{display}: {compact}"
+    if prefix:
+        return f"{prefix} {compact}"
+    return compact
 
 
 def sanitize_zoom_topic(value: str) -> str:
@@ -512,6 +514,11 @@ def parse_args() -> argparse.Namespace:
         help='Optional subject prefix (default: env AGENTMAIL_SUBJECT_PREFIX, else "Ryan +").',
     )
     p.add_argument(
+        "--no-subject-prefix",
+        action="store_true",
+        help="Do not use a subject prefix (ignores AGENTMAIL_SUBJECT_PREFIX / --subject-prefix).",
+    )
+    p.add_argument(
         "--to",
         dest="to_emails",
         action="append",
@@ -561,11 +568,15 @@ def main() -> None:
     host_participants = parse_participants(host_email_raw)
     cc_participants = merge_participants(cc_participants, host_participants)
 
-    subject_prefix = (args.subject_prefix or os.environ.get("AGENTMAIL_SUBJECT_PREFIX") or "").strip()
-    if not subject_prefix:
-        raise SystemExit(
-            "Missing subject prefix. Set AGENTMAIL_SUBJECT_PREFIX in ai-scheduler/.env.scheduler (or pass --subject-prefix)."
-        )
+    if args.no_subject_prefix:
+        subject_prefix = ""
+    else:
+        subject_prefix = (args.subject_prefix or os.environ.get("AGENTMAIL_SUBJECT_PREFIX") or "").strip()
+        if not subject_prefix:
+            raise SystemExit(
+                "Missing subject prefix. Set AGENTMAIL_SUBJECT_PREFIX in ai-scheduler/.env.scheduler (or pass --subject-prefix), "
+                "or pass --no-subject-prefix."
+            )
     host_name = (
         (args.host_name or "").strip()
         or (os.environ.get("AGENTMAIL_HOST_NAME") or "").strip()
