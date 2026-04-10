@@ -14,7 +14,7 @@ uv sync
 Run repo Python scripts with `uv run ...`.
 
 ## Layout
-- `codex-skills/`: Codex-facing skill tree, including `AGENTS.md`, skill folders, and `.system/`.
+- `codex-skills/`: Codex-facing skill tree for your own Codex skills and `AGENTS.md`.
 - `claude-skills/`: Claude-facing skill tree. Empty placeholder for now.
 - Repo tooling such as `pyproject.toml` and `uv.lock` stays at the repo root.
 
