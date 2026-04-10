@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Scheduler"
+  short_description: "Schedule Zoom meetings, email .ics invites"
+  default_prompt: "Create a Zoom meeting (or reuse an existing join URL) and send an AgentMail calendar invite using the standard template. Keep the email professional and minimal. Always confirm host email, time (with timezone), and participants (To/CC) before sending. Ask for missing details. Never store secrets in files; use env vars or an env file."
