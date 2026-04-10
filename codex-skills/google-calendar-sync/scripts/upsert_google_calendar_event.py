@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import uuid
 from datetime import datetime
@@ -12,30 +13,71 @@ from zoneinfo import ZoneInfo
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 DT_FORMAT = "%Y-%m-%d %H:%M"
+DEFAULT_ENV_PATH = Path(__file__).resolve().parents[1] / ".env.calendar"
+
+
+def load_env_file(env_path: Path) -> None:
+    if not env_path.exists():
+        return
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
 def parse_args() -> argparse.Namespace:
+    bootstrap = argparse.ArgumentParser(add_help=False)
+    bootstrap.add_argument("--env-file", default=str(DEFAULT_ENV_PATH))
+    bootstrap_args, _ = bootstrap.parse_known_args()
+    load_env_file(Path(bootstrap_args.env_file).expanduser())
+
     parser = argparse.ArgumentParser(
         description="Create or update a Google Calendar event."
     )
+    parser.add_argument("--env-file", default=str(DEFAULT_ENV_PATH))
     parser.add_argument("--summary", required=True)
     parser.add_argument("--start", required=True, help="YYYY-MM-DD HH:MM")
     parser.add_argument("--end", required=True, help="YYYY-MM-DD HH:MM")
-    parser.add_argument("--tz", required=True, help="IANA timezone")
+    parser.add_argument(
+        "--tz",
+        default=os.environ.get("GOOGLE_CALENDAR_TZ"),
+        help="IANA timezone",
+    )
     parser.add_argument("--description")
     parser.add_argument("--location")
-    parser.add_argument("--calendar-id", default="primary")
+    parser.add_argument(
+        "--calendar-id",
+        default=os.environ.get("GOOGLE_CALENDAR_ID", "primary"),
+    )
     parser.add_argument("--event-id", help="If provided, update this event")
     parser.add_argument("--attendee", action="append", default=[])
     parser.add_argument("--add-meet", action="store_true")
-    parser.add_argument("--client-secret", required=True)
+    parser.add_argument(
+        "--client-secret",
+        default=os.environ.get("GOOGLE_CALENDAR_CLIENT_SECRET"),
+    )
     parser.add_argument(
         "--token-path",
         default=str(
-            Path(__file__).resolve().parents[1] / "token.json"
+            Path(
+                os.environ.get(
+                    "GOOGLE_CALENDAR_TOKEN_PATH",
+                    Path(__file__).resolve().parents[1] / "token.json",
+                )
+            )
         ),
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    missing = []
+    if not args.tz:
+        missing.append("--tz or GOOGLE_CALENDAR_TZ")
+    if not args.client_secret:
+        missing.append("--client-secret or GOOGLE_CALENDAR_CLIENT_SECRET")
+    if missing:
+        parser.error("Missing required settings: " + ", ".join(missing))
+    return args
 
 
 def parse_local_datetime(raw: str, tz_name: str) -> datetime:

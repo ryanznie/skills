@@ -6,6 +6,8 @@
 .env
 .env.*
 !.env.*.example
+codex-skills/google-calendar-sync/token.json
+codex-skills/google-calendar-sync/client_secret_*.json
 
 # Python
 **/__pycache__/
@@ -27,4 +29,5 @@ env/
 .idea/
 
 # Skills
-.system/
+/.system/
+codex-skills/.system/
