@@ -13,15 +13,9 @@ This is the direct-sync path:
 - your phone updates through the normal Google Calendar sync for that account
 - no `.ics` email step is required
 
-## When to use this instead of `.ics`
+## When to use this
 
-Use this skill when the user wants a real calendar update.
-
-Use `ics-sync` only when:
-
-- you need a portable invite file
-- you want email-based delivery
-- you do not have calendar API credentials
+Use this skill when the user wants a real calendar update written directly to Google Calendar.
 
 ## How phone sync works
 
@@ -106,4 +100,3 @@ uv run google-calendar-sync/scripts/upsert_google_calendar_event.py \
 - Default calendar is `primary`
 - The first run triggers a local OAuth consent flow
 - The token file defaults to `google-calendar-sync/token.json`
-- If you want an agent workflow with email fallback later, pair this skill with `ics-sync`

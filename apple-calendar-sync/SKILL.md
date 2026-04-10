@@ -112,4 +112,3 @@ uv run apple-calendar-sync/scripts/upsert_caldav_event.py \
 
 - iCloud support is done through standard CalDAV, not a separate Apple-only API
 - For iCloud, create an app-specific password at `account.apple.com`
-- If you want email invite fallback later, pair this skill with `ics-sync`
