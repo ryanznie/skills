@@ -2,6 +2,17 @@
 
 Home for my AI agent skills.
 
+## Python setup
+
+This repo uses `uv` for Python dependency management and virtualenv execution.
+
+```sh
+cd /Users/ryanznie/Desktop/work/skills
+uv sync
+```
+
+Run repo Python scripts with `uv run ...`.
+
 ## Layout
 - Each skill lives in a top-level folder (e.g. `ai-scheduler/`) with a `SKILL.md`.
 - System skills live in `.system/`.

@@ -36,7 +36,7 @@ Apple documents app-specific passwords for third-party access to iCloud Mail, Ca
 ## Dependencies
 
 ```bash
-python3 -m pip install caldav icalendar
+uv sync
 ```
 
 ## Required inputs
@@ -76,7 +76,7 @@ Use [SETUP.md](/Users/ryanznie/Desktop/work/skills/apple-calendar-sync/SETUP.md)
 Create a new event in iCloud Calendar:
 
 ```bash
-python3 apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run apple-calendar-sync/scripts/upsert_caldav_event.py \
   --summary "Project Review" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30" \
@@ -90,7 +90,7 @@ python3 apple-calendar-sync/scripts/upsert_caldav_event.py \
 Update an existing event:
 
 ```bash
-python3 apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run apple-calendar-sync/scripts/upsert_caldav_event.py \
   --uid "<existing uid>" \
   --summary "Project Review" \
   --start "2026-04-15 15:00" \

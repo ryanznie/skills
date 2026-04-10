@@ -35,10 +35,14 @@ If your phone is signed into the same Google account and calendar sync is enable
 4. Install dependencies:
 
 ```bash
-python3 -m pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+uv sync
 ```
 
 The script stores a refreshable token locally after the first successful authorization.
+
+For persistent repo-local setup, create `google-calendar-sync/.env.calendar`. The script loads that file automatically, or you can override it with `--env-file`.
+
+Use [SETUP.md](/Users/ryanznie/Desktop/work/skills/google-calendar-sync/SETUP.md) for the one-time setup steps on a MacBook.
 
 ## Required inputs
 
@@ -62,7 +66,7 @@ The script stores a refreshable token locally after the first successful authori
 Create a new event in your primary calendar:
 
 ```bash
-python3 google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run google-calendar-sync/scripts/upsert_google_calendar_event.py \
   --summary "Project Review" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30" \
@@ -73,7 +77,7 @@ python3 google-calendar-sync/scripts/upsert_google_calendar_event.py \
 Create a new event with attendees and Google Meet:
 
 ```bash
-python3 google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run google-calendar-sync/scripts/upsert_google_calendar_event.py \
   --summary "Project Review" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30" \
@@ -88,7 +92,7 @@ python3 google-calendar-sync/scripts/upsert_google_calendar_event.py \
 Update an existing event:
 
 ```bash
-python3 google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run google-calendar-sync/scripts/upsert_google_calendar_event.py \
   --event-id "<existing event id>" \
   --summary "Project Review" \
   --start "2026-04-15 15:00" \
