@@ -8,6 +8,10 @@ Home for my AI agent skills.
 
 ## Summary
 - `ai-scheduler`: Schedules Zoom meetings and emails `.ics` invites via AgentMail.
+- `apple-calendar-sync`: Creates or updates iCloud/CalDAV events so Apple Calendar syncs them to your devices.
+  Setup: see `apple-calendar-sync/SETUP.md`. Local credentials live in `apple-calendar-sync/.env.calendar`.
+- `google-calendar-sync`: Creates or updates Google Calendar events directly so devices synced to that account get the update.
+- `ics-sync`: Generates `.ics` calendar events and can email them, including to AgentMail inboxes.
 
 ## Point Codex at this repo
 This repo is meant to back `~/.codex/skills`.

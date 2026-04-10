@@ -15,6 +15,7 @@
 # Virtual Environments
 .venv_agentmail/
 .venv/
+**/.venv/
 venv/
 env/
 
