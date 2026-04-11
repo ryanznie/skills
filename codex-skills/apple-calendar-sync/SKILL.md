@@ -57,6 +57,13 @@ uv sync
 - Location
 - URL
 
+## Reasonable estimates for missing details
+
+- If the user gives a start time but no end time, use a reasonable default duration based on the event type.
+- For appointment-style events such as `appt`, `apt`, or `appointment`, default to `30 minutes` unless the user indicates otherwise.
+- State the assumption briefly when confirming or reporting the created event.
+- If the missing detail would materially change the scheduling outcome, ask instead of guessing.
+
 You can provide the CalDAV connection settings either as flags or environment variables:
 
 ```bash
