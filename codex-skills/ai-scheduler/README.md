@@ -3,9 +3,9 @@
 Schedules Zoom meetings and emails `.ics` invites via AgentMail.
 
 ## Quick Start
-- Skill docs: `ai-scheduler/SKILL.md`
-- Script: `ai-scheduler/scripts/schedule_zoom_and_send_invite.py`
-- Env file: `ai-scheduler/.env.scheduler` (copy from `ai-scheduler/.env.scheduler.example`)
+- Skill docs: `codex-skills/ai-scheduler/SKILL.md`
+- Script: `codex-skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py`
+- Env file: `codex-skills/ai-scheduler/.env.scheduler` (copy from `codex-skills/ai-scheduler/.env.scheduler.example`)
 
 ### Setup Environment
 Create and activate a virtual environment using `uv`:
@@ -25,7 +25,7 @@ Example:
 
 ```sh
 source .venv_scheduler/bin/activate
-python ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
+python codex-skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
   --topic "Project Sync" \
   --chat-topic "Bi-weekly project update and roadmap discussion" \
   --to "Jane Doe <jane.doe@example.com>" \
@@ -48,4 +48,4 @@ To obtain `AGENTMAIL_API_KEY` and an inbox for `AGENTMAIL_INBOX_ID`:
 
 1. Go to AgentMail at `agentmail.to` and sign up.
 2. Create an inbox from the dashboard.
-3. Copy the inbox ID and API key into `ai-scheduler/.env.scheduler`.
+3. Copy the inbox ID and API key into `codex-skills/ai-scheduler/.env.scheduler`.
