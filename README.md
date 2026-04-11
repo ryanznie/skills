@@ -18,11 +18,12 @@ Run repo Python scripts with `uv run ...`.
 - `claude-skills/`: Claude-facing skill tree. Empty placeholder for now.
 - Repo tooling such as `pyproject.toml` and `uv.lock` stays at the repo root.
 
-## Summary
-- `ai-scheduler`: Schedules Zoom meetings and emails `.ics` invites via AgentMail.
-- `apple-calendar-sync`: Creates or updates iCloud/CalDAV events so Apple Calendar syncs them to your devices.
-  Setup: see `codex-skills/apple-calendar-sync/SETUP.md`. Local credentials live in `codex-skills/apple-calendar-sync/.env.calendar`.
-- `google-calendar-sync`: Creates or updates Google Calendar events directly so devices synced to that account get the update.
+## Available Actions
+| Skill | Action | Notes |
+| --- | --- | --- |
+| `ai-scheduler` | Schedule Zoom meetings and send `.ics` invites via AgentMail | Uses `codex-skills/ai-scheduler/` |
+| `apple-calendar-sync` | Create or update iCloud/CalDAV events that sync into Apple Calendar | Setup: `codex-skills/apple-calendar-sync/SETUP.md`. Local credentials: `codex-skills/apple-calendar-sync/.env.calendar` |
+| `google-calendar-sync` | Create or update Google Calendar events directly | Uses `codex-skills/google-calendar-sync/` |
 
 ## Point Codex at this repo
 Codex should point at the `codex-skills/` subtree, not the repo root.
