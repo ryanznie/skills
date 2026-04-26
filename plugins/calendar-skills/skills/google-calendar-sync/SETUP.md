@@ -9,6 +9,7 @@ This skill writes events directly into Google Calendar so they sync to devices u
 ```bash
 cd /path/to/skills
 uv sync
+cd plugins/calendar-skills/skills/google-calendar-sync
 ```
 
 2. In Google Cloud:
@@ -20,11 +21,10 @@ uv sync
 3. Create the skill config file:
 
 ```bash
-cp plugins/calendar-skills/skills/google-calendar-sync/.env.calendar.example \
-  plugins/calendar-skills/skills/google-calendar-sync/.env.calendar
+cp .env.calendar.example .env.calendar
 ```
 
-4. Edit `plugins/calendar-skills/skills/google-calendar-sync/.env.calendar` and fill in:
+4. Edit `.env.calendar` and fill in:
 
 - `GOOGLE_CALENDAR_TZ`
 - `GOOGLE_CALENDAR_CLIENT_SECRET`
@@ -40,7 +40,7 @@ The first live run opens a local browser-based Google OAuth flow and writes the 
 Create a test event:
 
 ```bash
-uv run plugins/calendar-skills/skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run scripts/upsert_google_calendar_event.py \
   --summary "Google Calendar Test" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30"
@@ -54,4 +54,4 @@ Mention the skill by name in your prompt:
 Use google-calendar-sync to create an event called Google Calendar Test tomorrow at 2:00 PM.
 ```
 
-With `plugins/calendar-skills/skills/google-calendar-sync/.env.calendar` in place, you do not need to resend the client secret path every time.
+With `.env.calendar` in place, you do not need to resend the client secret path every time.

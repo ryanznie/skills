@@ -3,14 +3,23 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      bump:
+        description: "Semver bump to apply before releasing"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
       prerelease:
-        description: 'Mark as pre-release'
+        description: "Mark as pre-release"
         type: boolean
         default: false
 
 jobs:
   release:
-    name: Create GitHub Release
+    name: Bump Version And Create GitHub Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -20,27 +29,56 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Read version from plugin.json
-        id: version
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Read current version
+        id: current
         run: |
           VERSION=$(jq -r '.version' plugins/calendar-skills/.claude-plugin/plugin.json)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Compute next version
+        id: next
+        env:
+          CURRENT_VERSION: ${{ steps.current.outputs.version }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+          case "$BUMP" in
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            *)
+              echo "::error::Unsupported bump type: $BUMP"
+              exit 1
+              ;;
+          esac
+
+          NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$NEXT_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check if tag already exists
-        id: tag_check
+        env:
+          TAG: ${{ steps.next.outputs.tag }}
         run: |
-          if git rev-parse "refs/tags/v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
+          if git rev-parse "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "::error::Tag ${TAG} already exists."
+            exit 1
           fi
-
-      - name: Abort if tag already exists
-        if: steps.tag_check.outputs.exists == 'true'
-        run: |
-          echo "::error::Tag v${{ steps.version.outputs.version }} already exists. Bump the version in plugin.json before releasing."
-          exit 1
 
       - name: Find previous release tag
         id: prev_tag
@@ -48,10 +86,30 @@ jobs:
           PREV=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)
           echo "tag=${PREV}" >> "$GITHUB_OUTPUT"
 
+      - name: Update plugin version
+        env:
+          NEXT_VERSION: ${{ steps.next.outputs.version }}
+        run: |
+          tmp=$(mktemp)
+          jq --arg version "$NEXT_VERSION" '.version = $version' \
+            plugins/calendar-skills/.claude-plugin/plugin.json > "$tmp"
+          mv "$tmp" plugins/calendar-skills/.claude-plugin/plugin.json
+
+      - name: Commit version bump
+        env:
+          NEXT_VERSION: ${{ steps.next.outputs.version }}
+        run: |
+          git add plugins/calendar-skills/.claude-plugin/plugin.json
+          git commit -m "Bump release to v${NEXT_VERSION}"
+
+      - name: Push version bump commit
+        run: |
+          git push origin HEAD:${{ github.ref_name }}
+
       - name: Generate release notes
-        id: notes
         env:
           PREV_TAG: ${{ steps.prev_tag.outputs.tag }}
+          NEXT_VERSION: ${{ steps.next.outputs.version }}
         run: |
           if [ -n "$PREV_TAG" ]; then
             RANGE="${PREV_TAG}..HEAD"
@@ -124,22 +182,30 @@ jobs:
             echo ""
 
             if [ -n "$PREV_TAG" ]; then
-              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...v${{ steps.version.outputs.version }}"
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...v${NEXT_VERSION}"
             else
-              echo "**Full Changelog**: https://github.com/${{ github.repository }}/commits/v${{ steps.version.outputs.version }}"
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/commits/v${NEXT_VERSION}"
             fi
           } > /tmp/release_notes.md
 
-      - name: Create tag and GitHub release
+      - name: Create tag
+        env:
+          TAG: ${{ steps.next.outputs.tag }}
+        run: |
+          git tag "$TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.next.outputs.tag }}
         run: |
           PRERELEASE_FLAG=""
           if [ "${{ inputs.prerelease }}" = "true" ]; then
             PRERELEASE_FLAG="--prerelease"
           fi
-          gh release create "${{ steps.version.outputs.tag }}" \
-            --title "calendar-skills ${{ steps.version.outputs.tag }}" \
+
+          gh release create "$TAG" \
+            --title "calendar-skills ${TAG}" \
             --notes-file /tmp/release_notes.md \
-            --target "${{ github.sha }}" \
             $PRERELEASE_FLAG
