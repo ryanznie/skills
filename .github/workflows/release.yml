@@ -30,11 +30,21 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
     steps:
+      - name: Require release token
+        run: |
+          if [ -z "$RELEASE_TOKEN" ]; then
+            echo "::error::Missing RELEASE_TOKEN secret. Add a token with push and pull request permissions."
+            exit 1
+          fi
+
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Configure git author
         run: |
@@ -239,7 +249,7 @@ jobs:
 
       - name: Create GitHub release
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           PLUGIN: ${{ inputs.plugin }}
           TAG: ${{ steps.next.outputs.tag }}
         run: |
@@ -255,7 +265,7 @@ jobs:
 
       - name: Open pull request for version bump
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           PLUGIN: ${{ inputs.plugin }}
           TAG: ${{ steps.next.outputs.tag }}
           RELEASE_BRANCH: ${{ steps.next.outputs.branch }}
