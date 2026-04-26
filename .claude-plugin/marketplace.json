@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "skills",
+  "description": "Scheduling and calendar skills for Claude Code",
+  "owner": {
+    "name": "Ryan Nie"
+  },
+  "plugins": [
+    {
+      "name": "skills",
+      "description": "Skills for Zoom scheduling and calendar sync",
+      "author": {
+        "name": "Ryan Nie"
+      },
+      "source": "./plugins/skills",
+      "category": "productivity"
+    }
+  ]
+}

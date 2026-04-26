@@ -1,7 +1,7 @@
 [project]
 name = "skills"
 version = "0.1.0"
-description = "Utility scripts and setup for local Codex skills."
+description = "Plugin-first skills workspace for Claude Code and other skill-compatible agents."
 requires-python = ">=3.12"
 dependencies = [
   "caldav",

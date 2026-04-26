@@ -1,0 +1,145 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Mark as pre-release'
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Read version from plugin.json
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' plugins/skills/.claude-plugin/plugin.json)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check if tag already exists
+        id: tag_check
+        run: |
+          if git rev-parse "refs/tags/v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Abort if tag already exists
+        if: steps.tag_check.outputs.exists == 'true'
+        run: |
+          echo "::error::Tag v${{ steps.version.outputs.version }} already exists. Bump the version in plugin.json before releasing."
+          exit 1
+
+      - name: Find previous release tag
+        id: prev_tag
+        run: |
+          PREV=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)
+          echo "tag=${PREV}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes
+        id: notes
+        env:
+          PREV_TAG: ${{ steps.prev_tag.outputs.tag }}
+        run: |
+          if [ -n "$PREV_TAG" ]; then
+            RANGE="${PREV_TAG}..HEAD"
+          else
+            RANGE="HEAD"
+          fi
+
+          git log "$RANGE" --pretty=format:"%H %s" > /tmp/commits.txt
+
+          FEATURES="" DOCS="" FIXES="" CHORES="" OTHER=""
+
+          while IFS= read -r line; do
+            HASH=$(echo "$line" | cut -d' ' -f1)
+            SUBJECT=$(echo "$line" | cut -d' ' -f2-)
+            SHORT="${HASH:0:7}"
+            ENTRY="- ${SUBJECT} (\`${SHORT}\`)"
+
+            case "$SUBJECT" in
+              feat*|add*|Add*|new*|New*|implement*|Implement*)
+                FEATURES="${FEATURES}"$'\n'"${ENTRY}" ;;
+              fix*|Fix*|bug*|Bug*)
+                FIXES="${FIXES}"$'\n'"${ENTRY}" ;;
+              doc*|Doc*|readme*|README*)
+                DOCS="${DOCS}"$'\n'"${ENTRY}" ;;
+              chore*|Chore*|refactor*|Refactor*|ci*|CI*|build*|Build*|bump*|Bump*|remove*|Remove*)
+                CHORES="${CHORES}"$'\n'"${ENTRY}" ;;
+              *)
+                OTHER="${OTHER}"$'\n'"${ENTRY}" ;;
+            esac
+          done < /tmp/commits.txt
+
+          CONTRIBUTORS=$(git log "$RANGE" --pretty=format:"%an" | sort -u | sed 's/^/- /')
+
+          {
+            echo "## What's Changed"
+            echo ""
+
+            if [ -n "$FEATURES" ]; then
+              echo "### Skills & Features"
+              echo "$FEATURES"
+              echo ""
+            fi
+
+            if [ -n "$FIXES" ]; then
+              echo "### Bug Fixes"
+              echo "$FIXES"
+              echo ""
+            fi
+
+            if [ -n "$DOCS" ]; then
+              echo "### Documentation"
+              echo "$DOCS"
+              echo ""
+            fi
+
+            if [ -n "$OTHER" ]; then
+              echo "### Other Changes"
+              echo "$OTHER"
+              echo ""
+            fi
+
+            if [ -n "$CHORES" ]; then
+              echo "### Maintenance"
+              echo "$CHORES"
+              echo ""
+            fi
+
+            echo "### Contributors"
+            echo "$CONTRIBUTORS"
+            echo ""
+
+            if [ -n "$PREV_TAG" ]; then
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...v${{ steps.version.outputs.version }}"
+            else
+              echo "**Full Changelog**: https://github.com/${{ github.repository }}/commits/v${{ steps.version.outputs.version }}"
+            fi
+          } > /tmp/release_notes.md
+
+      - name: Create tag and GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE_FLAG=""
+          if [ "${{ inputs.prerelease }}" = "true" ]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --title "skills ${{ steps.version.outputs.tag }}" \
+            --notes-file /tmp/release_notes.md \
+            --target "${{ github.sha }}" \
+            $PRERELEASE_FLAG

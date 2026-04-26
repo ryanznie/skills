@@ -507,7 +507,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--env-file",
         default=str(default_env_file),
-        help="Optional .env-style file to source (only fills missing env vars). Default: codex-skills/ai-scheduler/.env.scheduler",
+        help="Optional .env-style file to source (only fills missing env vars). Default: skills/ai-scheduler/.env.scheduler",
     )
     p.add_argument("--topic", default="Zoom Meeting", help="Meeting topic (used for Zoom title + email subject).")
     p.add_argument("--chat-topic", default=None, help="Optional: included in the email body as the meeting topic.")
@@ -587,7 +587,7 @@ def main() -> None:
         subject_prefix = (args.subject_prefix or os.environ.get("AGENTMAIL_SUBJECT_PREFIX") or "").strip()
         if not subject_prefix:
             raise SystemExit(
-                "Missing subject prefix. Set AGENTMAIL_SUBJECT_PREFIX in codex-skills/ai-scheduler/.env.scheduler (or pass --subject-prefix), "
+                "Missing subject prefix. Set AGENTMAIL_SUBJECT_PREFIX in skills/ai-scheduler/.env.scheduler (or pass --subject-prefix), "
                 "or pass --no-subject-prefix."
             )
     host_name = (

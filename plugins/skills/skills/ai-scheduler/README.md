@@ -3,29 +3,28 @@
 Schedules Zoom meetings and emails `.ics` invites via AgentMail.
 
 ## Quick Start
-- Skill docs: `codex-skills/ai-scheduler/SKILL.md`
-- Script: `codex-skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py`
-- Env file: `codex-skills/ai-scheduler/.env.scheduler` (copy from `codex-skills/ai-scheduler/.env.scheduler.example`)
+- Skill docs: `skills/ai-scheduler/SKILL.md`
+- Script: `skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py`
+- Env file: `skills/ai-scheduler/.env.scheduler` (copy from `skills/ai-scheduler/.env.scheduler.example`)
 
 ### Setup Environment
-Create and activate a virtual environment using `uv`:
+Use the dedicated AgentMail environment that this repo already uses for live Zoom + AgentMail runs:
 
 ```sh
-# Create a virtual environment
-uv venv .venv_scheduler
+# If you need to create it from scratch:
+python3 -m venv .venv_agentmail
+. .venv_agentmail/bin/activate
+pip install httpx agentmail
 
-# Activate the virtual environment
-source .venv_scheduler/bin/activate
-
-# Install dependencies
-uv pip install httpx agentmail
+# For normal use:
+. .venv_agentmail/bin/activate
 ```
 
 Example:
 
 ```sh
-source .venv_scheduler/bin/activate
-python codex-skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
+. .venv_agentmail/bin/activate
+.venv_agentmail/bin/python skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
   --topic "Project Sync" \
   --chat-topic "Bi-weekly project update and roadmap discussion" \
   --to "Jane Doe <jane.doe@example.com>" \
@@ -48,4 +47,4 @@ To obtain `AGENTMAIL_API_KEY` and an inbox for `AGENTMAIL_INBOX_ID`:
 
 1. Go to AgentMail at `agentmail.to` and sign up.
 2. Create an inbox from the dashboard.
-3. Copy the inbox ID and API key into `codex-skills/ai-scheduler/.env.scheduler`.
+3. Copy the inbox ID and API key into `skills/ai-scheduler/.env.scheduler`.

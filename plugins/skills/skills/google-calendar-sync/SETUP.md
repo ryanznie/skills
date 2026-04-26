@@ -7,7 +7,7 @@ This skill writes events directly into Google Calendar so they sync to devices u
 1. Create or refresh the repo virtual environment and install dependencies:
 
 ```bash
-cd /Users/ryanznie/Desktop/work/skills
+cd /path/to/skills
 uv sync
 ```
 
@@ -20,11 +20,11 @@ uv sync
 3. Create the skill config file:
 
 ```bash
-cp /Users/ryanznie/Desktop/work/skills/codex-skills/google-calendar-sync/.env.calendar.example \
-  /Users/ryanznie/Desktop/work/skills/codex-skills/google-calendar-sync/.env.calendar
+cp skills/google-calendar-sync/.env.calendar.example \
+  skills/google-calendar-sync/.env.calendar
 ```
 
-4. Edit `codex-skills/google-calendar-sync/.env.calendar` and fill in:
+4. Edit `skills/google-calendar-sync/.env.calendar` and fill in:
 
 - `GOOGLE_CALENDAR_TZ`
 - `GOOGLE_CALENDAR_CLIENT_SECRET`
@@ -40,7 +40,7 @@ The first live run opens a local browser-based Google OAuth flow and writes the 
 Create a test event:
 
 ```bash
-uv run /Users/ryanznie/Desktop/work/skills/codex-skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
   --summary "Google Calendar Test" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30"
@@ -54,4 +54,4 @@ Mention the skill by name in your prompt:
 Use google-calendar-sync to create an event called Google Calendar Test tomorrow at 2:00 PM.
 ```
 
-With `codex-skills/google-calendar-sync/.env.calendar` in place, you do not need to resend the client secret path every time.
+With `skills/google-calendar-sync/.env.calendar` in place, you do not need to resend the client secret path every time.
