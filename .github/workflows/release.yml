@@ -3,6 +3,11 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      plugin:
+        description: "Plugin name to release"
+        required: true
+        type: string
+        default: calendar-skills
       bump:
         description: "Semver bump to apply before releasing"
         required: true
@@ -36,8 +41,10 @@ jobs:
 
       - name: Read current version
         id: current
+        env:
+          PLUGIN: ${{ inputs.plugin }}
         run: |
-          VERSION=$(jq -r '.version' plugins/calendar-skills/.claude-plugin/plugin.json)
+          VERSION=$(jq -r '.version' "plugins/${PLUGIN}/.claude-plugin/plugin.json")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Compute next version
@@ -88,19 +95,37 @@ jobs:
 
       - name: Update plugin version
         env:
+          PLUGIN: ${{ inputs.plugin }}
           NEXT_VERSION: ${{ steps.next.outputs.version }}
         run: |
           tmp=$(mktemp)
           jq --arg version "$NEXT_VERSION" '.version = $version' \
-            plugins/calendar-skills/.claude-plugin/plugin.json > "$tmp"
-          mv "$tmp" plugins/calendar-skills/.claude-plugin/plugin.json
+            "plugins/${PLUGIN}/.claude-plugin/plugin.json" > "$tmp"
+          mv "$tmp" "plugins/${PLUGIN}/.claude-plugin/plugin.json"
+
+      - name: Verify plugin version matches release tag
+        env:
+          PLUGIN: ${{ inputs.plugin }}
+          NEXT_VERSION: ${{ steps.next.outputs.version }}
+          TAG: ${{ steps.next.outputs.tag }}
+        run: |
+          VERSION=$(jq -r '.version' "plugins/${PLUGIN}/.claude-plugin/plugin.json")
+          if [ "$VERSION" != "$NEXT_VERSION" ]; then
+            echo "::error::plugin.json version ($VERSION) does not match computed release version ($NEXT_VERSION)."
+            exit 1
+          fi
+          if [ "v$VERSION" != "$TAG" ]; then
+            echo "::error::Release tag ($TAG) does not match plugin.json version ($VERSION)."
+            exit 1
+          fi
 
       - name: Commit version bump
         env:
+          PLUGIN: ${{ inputs.plugin }}
           NEXT_VERSION: ${{ steps.next.outputs.version }}
         run: |
-          git add plugins/calendar-skills/.claude-plugin/plugin.json
-          git commit -m "Bump release to v${NEXT_VERSION}"
+          git add "plugins/${PLUGIN}/.claude-plugin/plugin.json"
+          git commit -m "Bump ${PLUGIN} release to v${NEXT_VERSION}"
 
       - name: Push version bump commit
         run: |
@@ -198,6 +223,7 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          PLUGIN: ${{ inputs.plugin }}
           TAG: ${{ steps.next.outputs.tag }}
         run: |
           PRERELEASE_FLAG=""
@@ -206,6 +232,6 @@ jobs:
           fi
 
           gh release create "$TAG" \
-            --title "calendar-skills ${TAG}" \
+            --title "${PLUGIN} ${TAG}" \
             --notes-file /tmp/release_notes.md \
             $PRERELEASE_FLAG

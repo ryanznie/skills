@@ -1,6 +1,8 @@
-# Calendar Skills Plugin
+# Skills Marketplace
 
-Agent skills for scheduling and calendar sync for Claude Code and other skill-compatible agents.
+Plugin marketplace repo for Claude Code and other skill-compatible agents.
+
+This repository can host multiple plugins. Right now it contains `calendar-skills`.
 
 ## Installation
 
@@ -34,11 +36,21 @@ npx skills add ryanznie/skills
 
 ```bash
 git clone git@github.com:ryanznie/skills.git
-cd skills
+cd <repo-dir>
 claude --plugin-dir ./plugins/calendar-skills
 ```
 
-## Available Skills
+To work on a different plugin in this repo, point `claude --plugin-dir` at that plugin's directory under `plugins/`.
+
+## Available Plugins
+
+| Plugin | Description |
+|--------|-------------|
+| `calendar-skills` | Zoom scheduling, Apple Calendar sync, and Google Calendar sync |
+
+## Calendar Skills
+
+The current `calendar-skills` plugin includes:
 
 | Skill | Domain | Description |
 |-------|--------|-------------|
@@ -50,8 +62,8 @@ claude --plugin-dir ./plugins/calendar-skills
 
 ```text
 .claude-plugin/marketplace.json
-plugins/calendar-skills/.claude-plugin/plugin.json
-plugins/calendar-skills/skills/<skill-name>/SKILL.md
+plugins/<plugin-name>/.claude-plugin/plugin.json
+plugins/<plugin-name>/skills/<skill-name>/SKILL.md
 ```
 
 Each skill can include its own `scripts/`, `references/`, `assets/`, `templates/`, or `agents/` directories as needed.
@@ -75,6 +87,4 @@ Run repo Python entrypoints with `uv run ...`.
 
 ## Releases
 
-Plugin versioning is tracked in [plugins/calendar-skills/.claude-plugin/plugin.json](plugins/calendar-skills/.claude-plugin/plugin.json). GitHub releases are created by [release.yml](.github/workflows/release.yml) and use semver tags in the form `vX.Y.Z`.
-
-See [CHANGELOG.md](CHANGELOG.md) for the human-maintained change log.
+Each plugin should keep its own semver in its `plugin.json`. GitHub releases are created by [release.yml](.github/workflows/release.yml), which lets you choose the target plugin, bumps that plugin version, commits it, creates the matching `vX.Y.Z` tag, and publishes the release from that exact version.

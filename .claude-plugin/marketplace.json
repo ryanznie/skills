@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "skills",
-  "description": "Scheduling and calendar skills for Claude Code",
+  "description": "Plugin marketplace for Claude Code skills and workflows",
   "owner": {
     "name": "Ryan Nie"
   },
