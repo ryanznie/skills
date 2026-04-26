@@ -18,9 +18,10 @@ When cutting a release, the workflow must:
 
 - select the target plugin
 - bump that plugin version in `plugin.json`
-- commit that version bump
+- commit that version bump on a release branch
 - create the matching `<plugin>@<version>` git tag
 - publish the GitHub release from that same tag
+- open a PR back to `main` for the version bump
 
 ## Structure
 

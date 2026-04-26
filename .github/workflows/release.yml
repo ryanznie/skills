@@ -78,8 +78,10 @@ jobs:
           esac
 
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          RELEASE_BRANCH="release/${PLUGIN}/${NEXT_VERSION}"
           echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=${PLUGIN}@${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "branch=${RELEASE_BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Check if tag already exists
         env:
@@ -108,6 +110,12 @@ jobs:
             "plugins/${PLUGIN}/.claude-plugin/plugin.json" > "$tmp"
           mv "$tmp" "plugins/${PLUGIN}/.claude-plugin/plugin.json"
 
+      - name: Create release branch
+        env:
+          RELEASE_BRANCH: ${{ steps.next.outputs.branch }}
+        run: |
+          git checkout -b "$RELEASE_BRANCH"
+
       - name: Verify plugin version matches release tag
         env:
           PLUGIN: ${{ inputs.plugin }}
@@ -132,14 +140,17 @@ jobs:
           git add "plugins/${PLUGIN}/.claude-plugin/plugin.json"
           git commit -m "Bump ${PLUGIN} release to v${NEXT_VERSION}"
 
-      - name: Push version bump commit
+      - name: Push release branch
+        env:
+          RELEASE_BRANCH: ${{ steps.next.outputs.branch }}
         run: |
-          git push origin HEAD:${{ github.ref_name }}
+          git push origin HEAD:"$RELEASE_BRANCH"
 
       - name: Generate release notes
         env:
           PREV_TAG: ${{ steps.prev_tag.outputs.tag }}
           NEXT_VERSION: ${{ steps.next.outputs.version }}
+          TAG: ${{ steps.next.outputs.tag }}
         run: |
           if [ -n "$PREV_TAG" ]; then
             RANGE="${PREV_TAG}..HEAD"
@@ -240,3 +251,16 @@ jobs:
             --title "${TAG}" \
             --notes-file /tmp/release_notes.md \
             $PRERELEASE_FLAG
+
+      - name: Open pull request for version bump
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PLUGIN: ${{ inputs.plugin }}
+          TAG: ${{ steps.next.outputs.tag }}
+          RELEASE_BRANCH: ${{ steps.next.outputs.branch }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "$RELEASE_BRANCH" \
+            --title "Release ${PLUGIN} ${TAG}" \
+            --body "Automated version bump for ${PLUGIN} ${TAG}. Merge this PR to record the release version in the default branch."
