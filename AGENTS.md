@@ -12,15 +12,16 @@ When modifying or adding skills, keep these files in sync:
 
 ### Release conventions
 
-The GitHub release workflow (`.github/workflows/release.yml`) generates release notes directly from `git log`. It is the source of truth for published release notes in this repo.
+The GitHub release workflow (`.github/workflows/release.yml`) generates plugin-scoped release notes directly from `git log`. It is the source of truth for published release notes in this repo.
 
 When cutting a release, the workflow must:
 
-- select the target plugin
+- select the target plugin from the workflow dropdown
 - bump that plugin version in `plugin.json`
-- commit that version bump
+- commit that version bump on a release branch
 - create the matching `<plugin>@<version>` git tag
 - publish the GitHub release from that same tag
+- open a PR back to `main` for the version bump
 
 ## Structure
 
