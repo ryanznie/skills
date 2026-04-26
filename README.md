@@ -88,3 +88,5 @@ Run repo Python entrypoints with `uv run ...`.
 ## Releases
 
 Each plugin keeps its own semver in its `plugin.json`. GitHub releases are created by [release.yml](.github/workflows/release.yml), which lets you choose the target plugin from a dropdown, bumps that plugin version, commits it on a release branch, creates the matching `<plugin>@<version>` tag, publishes the release from that exact version, and opens a PR back to `main`.
+
+To run the workflow successfully, add a `RELEASE_TOKEN` repository secret with permission to push the release branch and create the pull request.

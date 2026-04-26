@@ -23,6 +23,8 @@ When cutting a release, the workflow must:
 - publish the GitHub release from that same tag
 - open a PR back to `main` for the version bump
 
+The workflow expects a `RELEASE_TOKEN` secret with permission to push the release branch and create the PR.
+
 ## Structure
 
 ```text
