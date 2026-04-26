@@ -22,11 +22,11 @@ uv sync
 3. Create the skill config file:
 
 ```bash
-cp skills/apple-calendar-sync/.env.calendar.example \
-  skills/apple-calendar-sync/.env.calendar
+cp plugins/calendar-skills/skills/apple-calendar-sync/.env.calendar.example \
+  plugins/calendar-skills/skills/apple-calendar-sync/.env.calendar
 ```
 
-4. Edit `skills/apple-calendar-sync/.env.calendar` and fill in:
+4. Edit `plugins/calendar-skills/skills/apple-calendar-sync/.env.calendar` and fill in:
 
 - `APPLE_CALENDAR_USERNAME`
 - `APPLE_CALENDAR_PASSWORD`
@@ -42,21 +42,21 @@ For iCloud, keep:
 List your available calendars:
 
 ```bash
-uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run plugins/calendar-skills/skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
   --list-calendars
 ```
 
 Create a new iCloud calendar:
 
 ```bash
-uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run plugins/calendar-skills/skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
   --create-calendar "AI-sync"
 ```
 
 Create an event:
 
 ```bash
-uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run plugins/calendar-skills/skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
   --summary "Dinner with Eric" \
   --start "2026-04-13 19:30" \
   --end "2026-04-13 21:00" \
@@ -66,7 +66,7 @@ uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
 Update an event when you already know the UID:
 
 ```bash
-uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run plugins/calendar-skills/skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
   --uid "<existing uid>" \
   --summary "Dinner with Eric" \
   --start "2026-04-13 20:00" \
@@ -81,4 +81,4 @@ Mention the skill by name in your prompt:
 Use apple-calendar-sync to create an event called Dinner with Eric on Monday at 7:30 PM.
 ```
 
-With `skills/apple-calendar-sync/.env.calendar` in place, you do not need to resend credentials each time.
+With `plugins/calendar-skills/skills/apple-calendar-sync/.env.calendar` in place, you do not need to resend credentials each time.

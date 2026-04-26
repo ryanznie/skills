@@ -23,7 +23,7 @@ jobs:
       - name: Read version from plugin.json
         id: version
         run: |
-          VERSION=$(jq -r '.version' plugins/skills/.claude-plugin/plugin.json)
+          VERSION=$(jq -r '.version' plugins/calendar-skills/.claude-plugin/plugin.json)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -139,7 +139,7 @@ jobs:
             PRERELEASE_FLAG="--prerelease"
           fi
           gh release create "${{ steps.version.outputs.tag }}" \
-            --title "skills ${{ steps.version.outputs.tag }}" \
+            --title "calendar-skills ${{ steps.version.outputs.tag }}" \
             --notes-file /tmp/release_notes.md \
             --target "${{ github.sha }}" \
             $PRERELEASE_FLAG
