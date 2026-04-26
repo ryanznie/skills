@@ -78,7 +78,7 @@ jobs:
           esac
 
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          RELEASE_BRANCH="release/${PLUGIN}/${NEXT_VERSION}"
+          RELEASE_BRANCH="release/${PLUGIN}@${NEXT_VERSION}"
           echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=${PLUGIN}@${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
           echo "branch=${RELEASE_BRANCH}" >> "$GITHUB_OUTPUT"
@@ -136,9 +136,10 @@ jobs:
         env:
           PLUGIN: ${{ inputs.plugin }}
           NEXT_VERSION: ${{ steps.next.outputs.version }}
+          TAG: ${{ steps.next.outputs.tag }}
         run: |
           git add "plugins/${PLUGIN}/.claude-plugin/plugin.json"
-          git commit -m "Bump ${PLUGIN} release to v${NEXT_VERSION}"
+          git commit -m "Bump ${TAG}"
 
       - name: Push release branch
         env:
@@ -189,7 +190,7 @@ jobs:
             echo ""
 
             if [ -n "$FEATURES" ]; then
-              echo "### Skills & Features"
+              echo "### Plugin Changes"
               echo "$FEATURES"
               echo ""
             fi
@@ -262,5 +263,5 @@ jobs:
           gh pr create \
             --base main \
             --head "$RELEASE_BRANCH" \
-            --title "Release ${PLUGIN} ${TAG}" \
-            --body "Automated version bump for ${PLUGIN} ${TAG}. Merge this PR to record the release version in the default branch."
+            --title "Release ${TAG}" \
+            --body "Automated version bump for ${TAG}. Merge this PR to record the release version in the default branch."
