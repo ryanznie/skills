@@ -7,12 +7,12 @@
   },
   "plugins": [
     {
-      "name": "skills",
+      "name": "calendar-skills",
       "description": "Skills for Zoom scheduling and calendar sync",
       "author": {
         "name": "Ryan Nie"
       },
-      "source": "./plugins/skills",
+      "source": "./plugins/calendar-skills",
       "category": "productivity"
     }
   ]

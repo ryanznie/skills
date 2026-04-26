@@ -34,7 +34,7 @@ uv sync
 
 The script stores a refreshable token locally after the first successful authorization.
 
-For persistent repo-local setup, create `google-calendar-sync/.env.calendar` inside `skills/`. The script loads that file automatically, or you can override it with `--env-file`.
+For persistent repo-local setup, create `google-calendar-sync/.env.calendar` inside `plugins/calendar-skills/skills/`. The script loads that file automatically, or you can override it with `--env-file`.
 
 Use [SETUP.md](SETUP.md) for the one-time setup steps on a MacBook.
 
@@ -60,7 +60,7 @@ Use [SETUP.md](SETUP.md) for the one-time setup steps on a MacBook.
 Create a new event in your primary calendar:
 
 ```bash
-uv run skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run plugins/calendar-skills/skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
   --summary "Project Review" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30" \
@@ -71,7 +71,7 @@ uv run skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
 Create a new event with attendees and Google Meet:
 
 ```bash
-uv run skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run plugins/calendar-skills/skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
   --summary "Project Review" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30" \
@@ -86,7 +86,7 @@ uv run skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
 Update an existing event:
 
 ```bash
-uv run skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
+uv run plugins/calendar-skills/skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
   --event-id "<existing event id>" \
   --summary "Project Review" \
   --start "2026-04-15 15:00" \
@@ -99,4 +99,4 @@ uv run skills/google-calendar-sync/scripts/upsert_google_calendar_event.py \
 
 - Default calendar is `primary`
 - The first run triggers a local OAuth consent flow
-- The token file defaults to `skills/google-calendar-sync/token.json`
+- The token file defaults to `plugins/calendar-skills/skills/google-calendar-sync/token.json`

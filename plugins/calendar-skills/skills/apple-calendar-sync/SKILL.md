@@ -74,7 +74,7 @@ export APPLE_CALENDAR_NAME="Home"
 export APPLE_CALENDAR_TZ="America/New_York"
 ```
 
-For persistent repo-local setup, create `apple-calendar-sync/.env.calendar` inside `skills/`. The script loads that file automatically, or you can override it with `--env-file`.
+For persistent repo-local setup, create `apple-calendar-sync/.env.calendar` inside `plugins/calendar-skills/skills/`. The script loads that file automatically, or you can override it with `--env-file`.
 
 Use [SETUP.md](SETUP.md) for the one-time setup steps on a MacBook.
 
@@ -83,7 +83,7 @@ Use [SETUP.md](SETUP.md) for the one-time setup steps on a MacBook.
 Create a new event in iCloud Calendar:
 
 ```bash
-uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run plugins/calendar-skills/skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
   --summary "Project Review" \
   --start "2026-04-15 14:00" \
   --end "2026-04-15 14:30" \
@@ -97,7 +97,7 @@ uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
 Update an existing event:
 
 ```bash
-uv run skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
+uv run plugins/calendar-skills/skills/apple-calendar-sync/scripts/upsert_caldav_event.py \
   --uid "<existing uid>" \
   --summary "Project Review" \
   --start "2026-04-15 15:00" \

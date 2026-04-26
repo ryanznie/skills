@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-The format follows the categories used in the automated release workflow (`.github/workflows/release.yml`): **Skills & Features**, **Bug Fixes**, **Documentation**, **Maintenance**. Releases correspond to tags in the repository and version entries in `plugins/skills/.claude-plugin/plugin.json`.
+The format follows the categories used in the automated release workflow (`.github/workflows/release.yml`): **Skills & Features**, **Bug Fixes**, **Documentation**, **Maintenance**. Releases correspond to tags in the repository and version entries in `plugins/calendar-skills/.claude-plugin/plugin.json`.
 
 ---
 
@@ -16,7 +16,7 @@ Initial pluginized release.
 
 ### Skills & Features
 
-- feat: package `ai-scheduler`, `apple-calendar-sync`, and `google-calendar-sync` as the `skills` plugin
+- feat: package `ai-scheduler`, `apple-calendar-sync`, and `google-calendar-sync` as the `calendar-skills` plugin
 
 ### Documentation
 

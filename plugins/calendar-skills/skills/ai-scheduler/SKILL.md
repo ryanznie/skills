@@ -40,7 +40,7 @@ Use the bundled script to (a) create a Zoom meeting via API, and/or (b) send an 
 
 Preferred: set env vars in the environment running the script.
 
-Optional: put env vars in `skills/ai-scheduler/.env.scheduler` (default), or pass a custom path via `--env-file`. The script reads the env file and only fills missing env vars. Treat the values below as placeholders and keep the real values in `skills/ai-scheduler/.env.scheduler`.
+Optional: put env vars in `plugins/calendar-skills/skills/ai-scheduler/.env.scheduler` (default), or pass a custom path via `--env-file`. The script reads the env file and only fills missing env vars. Treat the values below as placeholders and keep the real values in `plugins/calendar-skills/skills/ai-scheduler/.env.scheduler`.
 
 ```bash
 ZOOM_ACCOUNT_ID=...
@@ -60,7 +60,7 @@ Create a meeting via Zoom API, then email an invite:
 
 ```bash
 . .venv_agentmail/bin/activate
-.venv_agentmail/bin/python skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
+.venv_agentmail/bin/python plugins/calendar-skills/skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
   --topic "AgentMail" \
   --chat-topic "<Topic>" \
   --to "participant1@example.com" \
@@ -74,7 +74,7 @@ Reuse an existing Zoom meeting (skip Zoom API) and just send the invite email:
 
 ```bash
 . .venv_agentmail/bin/activate
-.venv_agentmail/bin/python skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
+.venv_agentmail/bin/python plugins/calendar-skills/skills/ai-scheduler/scripts/schedule_zoom_and_send_invite.py \
   --topic "AgentMail" \
   --chat-topic "<Topic>" \
   --to "participant1@example.com" \
