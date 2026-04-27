@@ -4,6 +4,12 @@ Plugin marketplace repo for Claude Code and other skill-compatible agents.
 
 This repository can host multiple plugins. Right now it contains `calendar-skills`.
 
+It can connect to OpenClaw or ZeroClaw through the same plugin and skill layout.
+
+## Demo
+
+![Telegram demo showing a calendar event created from a chat message](assets/openclaw-zero-claw-demo.png)
+
 ## Installation
 
 ### Claude Code
@@ -64,6 +70,7 @@ The current `calendar-skills` plugin includes:
 .claude-plugin/marketplace.json
 plugins/<plugin-name>/.claude-plugin/plugin.json
 plugins/<plugin-name>/skills/<skill-name>/SKILL.md
+assets/openclaw-zero-claw-demo.png
 ```
 
 Each skill can include its own `scripts/`, `references/`, `assets/`, `templates/`, or `agents/` directories as needed.
