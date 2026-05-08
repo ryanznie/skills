@@ -5,8 +5,6 @@ description: Pressure-test a plan, design, or proposal by asking focused follow-
 
 # Grill Me
 
-This skill is forked from [mattpocock/skills](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md).
-
 Use this skill when the user wants a plan challenged rather than accepted at face value.
 
 Work through the design one question at a time:
