@@ -11,34 +11,32 @@ on:
           - calendar-skills
           - productivity
         default: calendar-skills
-      bump:
-        description: "Semver bump to apply before releasing"
-        required: true
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-        default: patch
       prerelease:
         description: "Mark as pre-release"
         type: boolean
         default: false
 
 jobs:
-  release:
-    name: Bump Version And Create GitHub Release
+  publish-tags:
+    name: Publish Release Tags
     runs-on: ubuntu-latest
     permissions:
       contents: write
     env:
       RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
+    outputs:
+      plugin: ${{ steps.meta.outputs.plugin }}
+      version: ${{ steps.meta.outputs.version }}
+      patch_tag: ${{ steps.meta.outputs.patch_tag }}
+      minor_tag: ${{ steps.meta.outputs.minor_tag }}
+      prev_tag: ${{ steps.meta.outputs.prev_tag }}
+
     steps:
       - name: Require release token
         run: |
           if [ -z "$RELEASE_TOKEN" ]; then
-            echo "::error::Missing RELEASE_TOKEN secret. Add a token with push and pull request permissions."
+            echo "::error::Missing RELEASE_TOKEN secret. Add a token with tag and release permissions."
             exit 1
           fi
 
@@ -52,123 +50,105 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Read current version
-        id: current
+      - name: Read release metadata
+        id: meta
         env:
           PLUGIN: ${{ inputs.plugin }}
         run: |
           VERSION=$(jq -r '.version' "plugins/${PLUGIN}/.claude-plugin/plugin.json")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Compute next version
-        id: next
-        env:
-          CURRENT_VERSION: ${{ steps.current.outputs.version }}
-          BUMP: ${{ inputs.bump }}
-          PLUGIN: ${{ inputs.plugin }}
-        run: |
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
-
-          case "$BUMP" in
-            patch)
-              PATCH=$((PATCH + 1))
-              ;;
-            minor)
-              MINOR=$((MINOR + 1))
-              PATCH=0
-              ;;
-            major)
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-              ;;
+          case "$VERSION" in
+            [0-9]*.[0-9]*.[0-9]*) ;;
             *)
-              echo "::error::Unsupported bump type: $BUMP"
+              echo "::error::plugin.json version must be in x.y.z format."
               exit 1
               ;;
           esac
 
-          NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          RELEASE_BRANCH="release/${PLUGIN}@${NEXT_VERSION}"
-          echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=${PLUGIN}@${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "branch=${RELEASE_BRANCH}" >> "$GITHUB_OUTPUT"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          PATCH_TAG="v${VERSION}+${PLUGIN}"
+          MINOR_TAG="v${MAJOR}.${MINOR}+${PLUGIN}"
+          PREV_VERSION=$(git tag --list "v*+${PLUGIN}" | while IFS= read -r tag; do
+            case "$tag" in
+              v[0-9]*.[0-9]*.[0-9]*+"${PLUGIN}")
+                printf '%s\n' "${tag#v}"
+                ;;
+            esac
+          done | sort -V | tail -n 1)
+          PREV_TAG=""
+          if [ -n "$PREV_VERSION" ]; then
+            PREV_TAG="v${PREV_VERSION}"
+          fi
 
-      - name: Check if tag already exists
+          echo "plugin=$PLUGIN" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "patch_tag=$PATCH_TAG" >> "$GITHUB_OUTPUT"
+          echo "minor_tag=$MINOR_TAG" >> "$GITHUB_OUTPUT"
+          echo "prev_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Check immutable tag does not already exist
         env:
-          TAG: ${{ steps.next.outputs.tag }}
+          PATCH_TAG: ${{ steps.meta.outputs.patch_tag }}
         run: |
-          if git rev-parse "refs/tags/${TAG}" >/dev/null 2>&1; then
-            echo "::error::Tag ${TAG} already exists."
+          if git rev-parse "refs/tags/${PATCH_TAG}" >/dev/null 2>&1; then
+            echo "::error::Tag ${PATCH_TAG} already exists."
             exit 1
           fi
 
-      - name: Find previous release tag
-        id: prev_tag
+      - name: Create release tags
         env:
-          PLUGIN: ${{ inputs.plugin }}
+          PATCH_TAG: ${{ steps.meta.outputs.patch_tag }}
+          MINOR_TAG: ${{ steps.meta.outputs.minor_tag }}
         run: |
-          PREV=$(git tag --list "${PLUGIN}@*" --sort=-version:refname | head -n 1 || true)
-          echo "tag=${PREV}" >> "$GITHUB_OUTPUT"
+          COMMIT=$(git rev-parse HEAD)
+          git tag "$PATCH_TAG" "$COMMIT"
+          git tag -f "$MINOR_TAG" "$COMMIT"
 
-      - name: Update plugin version
+      - name: Push release tags
         env:
-          PLUGIN: ${{ inputs.plugin }}
-          NEXT_VERSION: ${{ steps.next.outputs.version }}
+          PATCH_TAG: ${{ steps.meta.outputs.patch_tag }}
+          MINOR_TAG: ${{ steps.meta.outputs.minor_tag }}
         run: |
-          tmp=$(mktemp)
-          jq --arg version "$NEXT_VERSION" '.version = $version' \
-            "plugins/${PLUGIN}/.claude-plugin/plugin.json" > "$tmp"
-          mv "$tmp" "plugins/${PLUGIN}/.claude-plugin/plugin.json"
+          git push origin "$PATCH_TAG"
+          git push origin "$MINOR_TAG" --force
 
-      - name: Create release branch
-        env:
-          RELEASE_BRANCH: ${{ steps.next.outputs.branch }}
-        run: |
-          git checkout -b "$RELEASE_BRANCH"
+  create-github-release:
+    name: Create GitHub Release
+    needs: publish-tags
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
-      - name: Verify plugin version matches release tag
-        env:
-          PLUGIN: ${{ inputs.plugin }}
-          NEXT_VERSION: ${{ steps.next.outputs.version }}
-          TAG: ${{ steps.next.outputs.tag }}
+    steps:
+      - name: Require release token
         run: |
-          VERSION=$(jq -r '.version' "plugins/${PLUGIN}/.claude-plugin/plugin.json")
-          if [ "$VERSION" != "$NEXT_VERSION" ]; then
-            echo "::error::plugin.json version ($VERSION) does not match computed release version ($NEXT_VERSION)."
-            exit 1
-          fi
-          if [ "${PLUGIN}@${VERSION}" != "$TAG" ]; then
-            echo "::error::Release tag ($TAG) does not match plugin.json version ($VERSION)."
+          if [ -z "$RELEASE_TOKEN" ]; then
+            echo "::error::Missing RELEASE_TOKEN secret. Add a token with tag and release permissions."
             exit 1
           fi
 
-      - name: Commit version bump
-        env:
-          PLUGIN: ${{ inputs.plugin }}
-          NEXT_VERSION: ${{ steps.next.outputs.version }}
-          TAG: ${{ steps.next.outputs.tag }}
-        run: |
-          git add "plugins/${PLUGIN}/.claude-plugin/plugin.json"
-          git commit -m "Bump ${TAG}"
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.publish-tags.outputs.patch_tag }}
+          token: ${{ secrets.RELEASE_TOKEN }}
 
-      - name: Push release branch
-        env:
-          RELEASE_BRANCH: ${{ steps.next.outputs.branch }}
+      - name: Configure git author
         run: |
-          git push origin HEAD:"$RELEASE_BRANCH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Generate release notes
         env:
-          PREV_TAG: ${{ steps.prev_tag.outputs.tag }}
-          NEXT_VERSION: ${{ steps.next.outputs.version }}
-          TAG: ${{ steps.next.outputs.tag }}
-          PLUGIN: ${{ inputs.plugin }}
+          PLUGIN: ${{ needs.publish-tags.outputs.plugin }}
+          PATCH_TAG: ${{ needs.publish-tags.outputs.patch_tag }}
+          PREV_TAG: ${{ needs.publish-tags.outputs.prev_tag }}
         run: |
           if [ -n "$PREV_TAG" ]; then
-            RANGE="${PREV_TAG}..HEAD"
+            RANGE="${PREV_TAG}..${PATCH_TAG}"
           else
-            RANGE="HEAD"
+            RANGE="${PATCH_TAG}"
           fi
 
           git log "$RANGE" --pretty=format:"%H %s" -- "plugins/${PLUGIN}" > /tmp/commits.txt
@@ -195,7 +175,7 @@ jobs:
             esac
           done < /tmp/commits.txt
 
-          CONTRIBUTORS=$(git log "$RANGE" --pretty=format:"%an" | sort -u | sed 's/^/- /')
+          CONTRIBUTORS=$(git log "$RANGE" --pretty=format:"%an" -- "plugins/${PLUGIN}" | sort -u | sed 's/^/- /')
 
           {
             echo "## What's Changed"
@@ -236,38 +216,19 @@ jobs:
             echo ""
           } > /tmp/release_notes.md
 
-      - name: Create tag
-        env:
-          TAG: ${{ steps.next.outputs.tag }}
-        run: |
-          git tag "$TAG"
-          git push origin "$TAG"
-
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          PLUGIN: ${{ inputs.plugin }}
-          TAG: ${{ steps.next.outputs.tag }}
+          PATCH_TAG: ${{ needs.publish-tags.outputs.patch_tag }}
+          MINOR_TAG: ${{ needs.publish-tags.outputs.minor_tag }}
+          PRERELEASE: ${{ inputs.prerelease }}
         run: |
           PRERELEASE_FLAG=""
-          if [ "${{ inputs.prerelease }}" = "true" ]; then
+          if [ "$PRERELEASE" = "true" ]; then
             PRERELEASE_FLAG="--prerelease"
           fi
 
-          gh release create "$TAG" \
-            --title "${TAG}" \
+          gh release create "$PATCH_TAG" \
+            --title "$PATCH_TAG" \
             --notes-file /tmp/release_notes.md \
             $PRERELEASE_FLAG
-
-      - name: Open pull request for version bump
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          PLUGIN: ${{ inputs.plugin }}
-          TAG: ${{ steps.next.outputs.tag }}
-          RELEASE_BRANCH: ${{ steps.next.outputs.branch }}
-        run: |
-          gh pr create \
-            --base main \
-            --head "$RELEASE_BRANCH" \
-            --title "Release ${TAG}" \
-            --body "Automated version bump for ${TAG}. Merge this PR to record the release version in the default branch."
