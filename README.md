@@ -63,7 +63,7 @@ To work on a different plugin in this repo, point `claude --plugin-dir` at that 
 
 ## Current Skills
 
-The current `calendar-skills` plugin includes:
+### `calendar-skills`
 
 | Skill | Domain | Description |
 |-------|--------|-------------|
@@ -71,33 +71,11 @@ The current `calendar-skills` plugin includes:
 | [apple-calendar-sync](plugins/calendar-skills/skills/apple-calendar-sync/SKILL.md) | Calendar | Create or update CalDAV and iCloud calendar events |
 | [google-calendar-sync](plugins/calendar-skills/skills/google-calendar-sync/SKILL.md) | Calendar | Create or update Google Calendar events directly |
 
-The `productivity` plugin includes:
+### `productivity`
 
 | Skill | Domain | Description |
 |-------|--------|-------------|
 | [grill-me](plugins/productivity/skills/grill-me/SKILL.md) | Planning | Interrogate a plan or design until the tradeoffs are clear |
-
-## Repository Structure
-
-```text
-.claude-plugin/marketplace.json
-plugins/<plugin-name>/.claude-plugin/plugin.json
-plugins/<plugin-name>/skills/<skill-name>/SKILL.md
-assets/openclaw-zero-claw-demo.png
-```
-
-Each skill can include its own `scripts/`, `references/`, `assets/`, `templates/`, or `agents/` directories as needed.
-
-## Python Setup
-
-This repo uses `uv` for Python dependency management and execution.
-
-```bash
-cd /path/to/skills
-uv sync
-```
-
-Run repo Python entrypoints with `uv run ...`.
 
 ## Releases
 
