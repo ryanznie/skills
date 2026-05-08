@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - calendar-skills
+          - productivity
         default: calendar-skills
       bump:
         description: "Semver bump to apply before releasing"

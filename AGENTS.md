@@ -2,6 +2,8 @@
 
 This repository is a Claude Code plugin marketplace. Each plugin lives under `plugins/<plugin-name>/`, and each plugin's skills follow the open [Agent Skills specification](https://agentskills.io) format.
 
+Current plugins in this repo: `calendar-skills` and `productivity`.
+
 ## Keep updated
 
 When modifying or adding skills, keep these files in sync:
