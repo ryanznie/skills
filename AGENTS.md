@@ -19,13 +19,13 @@ The GitHub release workflow (`.github/workflows/release.yml`) generates plugin-s
 When cutting a release, the workflow must:
 
 - select the target plugin from the workflow dropdown
-- bump that plugin version in `plugin.json`
-- commit that version bump on a release branch
+- publish the version that is already recorded in `plugin.json`
 - create the matching `<plugin>@<version>` git tag
 - publish the GitHub release from that same tag
-- open a PR back to `main` for the version bump
 
-The workflow expects a `RELEASE_TOKEN` secret with permission to push the release branch and create the PR.
+Preferred practice is to bump `plugin.json` as part of the normal edit that changes the plugin, rather than creating a separate release PR just to record the version.
+
+The workflow expects a `RELEASE_TOKEN` secret with permission to create the release and push tags. If the repo policy still requires a PR-based release process, keep that as an exception rather than the default shape.
 
 ## Structure
 
