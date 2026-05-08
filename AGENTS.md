@@ -16,14 +16,15 @@ When modifying or adding skills, keep these files in sync:
 
 The release flow uses a single workflow file:
 
-- `.github/workflows/release.yml` publishes tags and creates the GitHub release for the selected plugin
+- `.github/workflows/release.yml` publishes tags and performs the GitHub release for the selected plugin
 
 The GitHub release body is generated from plugin-scoped `git log` output and is the source of truth for published release notes in this repo.
 
 When cutting a release, the workflow must:
 
 - select the target plugin from the workflow dropdown
-- read the version already recorded in `plugin.json`
+- choose a semver bump from the workflow dropdown
+- update that plugin's `plugin.json`
 - create the immutable patch tag `vX.Y.Z+<plugin>`
 - move the mutable minor tag `vX.Y+<plugin>` to the latest patch release for that minor line
 - check out the immutable patch tag in the release job

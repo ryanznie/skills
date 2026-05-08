@@ -11,6 +11,15 @@ on:
           - calendar-skills
           - productivity
         default: calendar-skills
+      bump:
+        description: "Semver bump to apply before releasing"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
       prerelease:
         description: "Mark as pre-release"
         type: boolean
@@ -54,9 +63,10 @@ jobs:
         id: meta
         env:
           PLUGIN: ${{ inputs.plugin }}
+          BUMP: ${{ inputs.bump }}
         run: |
-          VERSION=$(jq -r '.version' "plugins/${PLUGIN}/.claude-plugin/plugin.json")
-          case "$VERSION" in
+          CURRENT_VERSION=$(jq -r '.version' "plugins/${PLUGIN}/.claude-plugin/plugin.json")
+          case "$CURRENT_VERSION" in
             [0-9]*.[0-9]*.[0-9]*) ;;
             *)
               echo "::error::plugin.json version must be in x.y.z format."
@@ -64,7 +74,27 @@ jobs:
               ;;
           esac
 
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          case "$BUMP" in
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            *)
+              echo "::error::Unsupported bump type: $BUMP"
+              exit 1
+              ;;
+          esac
+
+          VERSION="${MAJOR}.${MINOR}.${PATCH}"
           PATCH_TAG="v${VERSION}+${PLUGIN}"
           MINOR_TAG="v${MAJOR}.${MINOR}+${PLUGIN}"
           PREV_VERSION=$(git tag --list "v*+${PLUGIN}" | while IFS= read -r tag; do
@@ -84,6 +114,25 @@ jobs:
           echo "patch_tag=$PATCH_TAG" >> "$GITHUB_OUTPUT"
           echo "minor_tag=$MINOR_TAG" >> "$GITHUB_OUTPUT"
           echo "prev_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Update plugin version
+        env:
+          PLUGIN: ${{ steps.meta.outputs.plugin }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          tmp=$(mktemp)
+          jq --arg version "$VERSION" '.version = $version' \
+            "plugins/${PLUGIN}/.claude-plugin/plugin.json" > "$tmp"
+          mv "$tmp" "plugins/${PLUGIN}/.claude-plugin/plugin.json"
+
+      - name: Commit version bump
+        env:
+          PLUGIN: ${{ steps.meta.outputs.plugin }}
+          VERSION: ${{ steps.meta.outputs.version }}
+          PATCH_TAG: ${{ steps.meta.outputs.patch_tag }}
+        run: |
+          git add "plugins/${PLUGIN}/.claude-plugin/plugin.json"
+          git commit -m "Bump ${PATCH_TAG}"
 
       - name: Check immutable tag does not already exist
         env:

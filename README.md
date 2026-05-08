@@ -103,7 +103,7 @@ Run repo Python entrypoints with `uv run ...`.
 
 Each plugin keeps its own semver in its `plugin.json`. The release flow uses a single workflow:
 
-- [release.yml](.github/workflows/release.yml) publishes tags and creates the GitHub release body for the selected plugin
+- [release.yml](.github/workflows/release.yml) publishes tags and performs the GitHub release for the selected plugin
 
 Tag format:
 
