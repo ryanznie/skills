@@ -99,23 +99,17 @@ uv sync
 
 Run repo Python entrypoints with `uv run ...`.
 
-## Tested Setup
-
-- `apple-calendar-sync`: uses the repo `uv` environment plus `plugins/calendar-skills/skills/apple-calendar-sync/.env.calendar`
-- `google-calendar-sync`: uses the repo `uv` environment plus `plugins/calendar-skills/skills/google-calendar-sync/.env.calendar`
-- `ai-scheduler`: uses `plugins/calendar-skills/skills/ai-scheduler/.env.scheduler` and the local `.venv_agentmail` environment
-
 ## Releases
 
 Each plugin keeps its own semver in its `plugin.json`. The release flow uses a single workflow:
 
-- [release.yml](.github/workflows/release.yml) publishes tags and creates the GitHub release body for the selected plugin
+- [release.yml](.github/workflows/release.yml) publishes tags and performs the GitHub release for the selected plugin
 
 Tag format:
 
 - immutable patch tag: `vX.Y.Z+<plugin>`
 - mutable minor tag: `vX.Y+<plugin>`
 
-The release workflow reads the version already recorded in that plugin's `plugin.json`, creates both tags, checks out the tagged commit in a release job, and publishes the GitHub release from that exact version.
+The release workflow lets you choose a semver bump, updates that plugin's `plugin.json`, creates both tags, checks out the tagged commit in a release job, and publishes the GitHub release from that exact version.
 
 To run the workflow successfully, add a `RELEASE_TOKEN` repository secret with permission to create tags and GitHub releases.
