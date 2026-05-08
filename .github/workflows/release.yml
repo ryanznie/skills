@@ -163,6 +163,7 @@ jobs:
           PREV_TAG: ${{ steps.prev_tag.outputs.tag }}
           NEXT_VERSION: ${{ steps.next.outputs.version }}
           TAG: ${{ steps.next.outputs.tag }}
+          PLUGIN: ${{ inputs.plugin }}
         run: |
           if [ -n "$PREV_TAG" ]; then
             RANGE="${PREV_TAG}..HEAD"
@@ -170,7 +171,7 @@ jobs:
             RANGE="HEAD"
           fi
 
-          git log "$RANGE" --pretty=format:"%H %s" > /tmp/commits.txt
+          git log "$RANGE" --pretty=format:"%H %s" -- "plugins/${PLUGIN}" > /tmp/commits.txt
 
           FEATURES="" DOCS="" FIXES="" CHORES="" OTHER=""
 
@@ -233,12 +234,6 @@ jobs:
             echo "### Contributors"
             echo "$CONTRIBUTORS"
             echo ""
-
-            if [ -n "$PREV_TAG" ]; then
-              echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${TAG}"
-            else
-              echo "**Full Changelog**: https://github.com/${{ github.repository }}/commits/${TAG}"
-            fi
           } > /tmp/release_notes.md
 
       - name: Create tag
