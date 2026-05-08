@@ -14,18 +14,24 @@ When modifying or adding skills, keep these files in sync:
 
 ### Release conventions
 
-The GitHub release workflow (`.github/workflows/release.yml`) generates plugin-scoped release notes directly from `git log`. It is the source of truth for published release notes in this repo.
+The release flow uses a single workflow file:
+
+- `.github/workflows/release.yml` publishes tags and creates the GitHub release for the selected plugin
+
+The GitHub release body is generated from plugin-scoped `git log` output and is the source of truth for published release notes in this repo.
 
 When cutting a release, the workflow must:
 
 - select the target plugin from the workflow dropdown
-- bump that plugin version in `plugin.json`
-- commit that version bump on a release branch
-- create the matching `<plugin>@<version>` git tag
-- publish the GitHub release from that same tag
-- open a PR back to `main` for the version bump
+- read the version already recorded in `plugin.json`
+- create the immutable patch tag `vX.Y.Z+<plugin>`
+- move the mutable minor tag `vX.Y+<plugin>` to the latest patch release for that minor line
+- check out the immutable patch tag in the release job
+- publish the GitHub release from the immutable patch tag
 
-The workflow expects a `RELEASE_TOKEN` secret with permission to push the release branch and create the PR.
+Preferred practice is to bump `plugin.json` as part of the normal edit that changes the plugin, rather than creating a separate release PR just to record the version. The release workflow should never create a PR for version bookkeeping.
+
+The workflows expect a `RELEASE_TOKEN` secret with permission to create tags and GitHub releases.
 
 ## Structure
 
