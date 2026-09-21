@@ -87,6 +87,27 @@ Reuse an existing Zoom meeting (skip Zoom API) and just send the invite email. R
   --existing-passcode "<passcode>"
 ```
 
+## Update an existing calendar invite
+
+To revise an invite that was already sent, use its original iCalendar `UID` and a higher `SEQUENCE`. This updates the existing event instead of creating a duplicate and does not require Zoom:
+
+```bash
+.venv_agentmail/bin/python scripts/send_calendar_update.py \
+  --uid "<original-uid>" \
+  --to "person@example.com" \
+  --cc "host@example.com" \
+  --subject "Ryan + Brandon: Coffee chat" \
+  --topic "Agents and software factory" \
+  --start "2026-09-23 16:00" \
+  --previous-start "2026-09-23 10:30" \
+  --tz "America/New_York" \
+  --duration 30 \
+  --location "Cafe" \
+  --sequence 1
+```
+
+Keep the UID and latest sequence number in the event log for future revisions. The update script sends a standard `METHOD:REQUEST` calendar message with the same UID, updated time/location, and no Zoom fields.
+
 ## Standard body template
 
 The invite email body must not be hardcoded. The script renders the email body by reading `references/body-template.md` and filling placeholders with your inputs (topic, host, participants, when, join URL, meeting ID, passcode, disclaimer).

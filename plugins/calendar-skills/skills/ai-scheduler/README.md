@@ -5,6 +5,7 @@ Schedules Zoom meetings and emails `.ics` invites via AgentMail.
 ## Quick Start
 - Skill docs: `SKILL.md`
 - Script: `scripts/schedule_zoom_and_send_invite.py`
+- Update script: `scripts/send_calendar_update.py`
 - Env file: `.env.scheduler` (copy from `.env.scheduler.example`)
 
 ### Setup Environment
@@ -34,6 +35,8 @@ cd plugins/calendar-skills/skills/ai-scheduler
   --tz "America/New_York" \
   --duration 30
 ```
+
+To update an existing invite, use `send_calendar_update.py` with the original event UID and a higher sequence number. This supports in-person locations and does not create a Zoom meeting.
 
 ## Zoom Credentials
 To obtain `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, and `ZOOM_CLIENT_SECRET`, create a Zoom Server-to-Server OAuth app:

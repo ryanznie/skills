@@ -1,5 +1,6 @@
 import argparse
 import base64
+import json
 import os
 import re
 import uuid
@@ -286,8 +287,10 @@ def build_ics(
     meeting_id: int,
     passcode: str | None,
     timezone_name: str,
+    uid: str | None = None,
+    sequence: int = 0,
 ) -> str:
-    uid = f"{uuid.uuid4()}@agentmail"
+    uid = uid or f"{uuid.uuid4()}@agentmail"
     dtstamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
     vtimezone = """BEGIN:VTIMEZONE
@@ -341,6 +344,7 @@ METHOD:REQUEST
 {vtimezone if timezone_name == "America/New_York" else ""}
 BEGIN:VEVENT
 UID:{uid}
+SEQUENCE:{sequence}
 DTSTAMP:{dtstamp}
 DTSTART;TZID={timezone_name}:{dtstart}
 DTEND;TZID={timezone_name}:{dtend}
@@ -688,6 +692,7 @@ def main() -> None:
     if not args.yes:
         confirm_or_exit()
 
+    event_uid = f"{uuid.uuid4()}@agentmail"
     ics = build_ics(
         organizer_email=host_email,
         organizer_name=host_name,
@@ -700,6 +705,7 @@ def main() -> None:
         meeting_id=meeting.meeting_id,
         passcode=meeting.password,
         timezone_name=args.timezone_name,
+        uid=event_uid,
     )
 
     agentmail_key = _get_env("AGENTMAIL_API_KEY")
@@ -719,6 +725,21 @@ def main() -> None:
     print(" - to:", [_format_participant(p) for p in to_participants])
     print(" - cc:", [_format_participant(p) for p in cc_participants])
     print(" - message_id:", message_id)
+    event_log = Path(__file__).resolve().parents[1] / ".event-log.jsonl"
+    event_log.open("a", encoding="utf-8").write(json.dumps({
+        "uid": event_uid,
+        "sequence": 0,
+        "subject": subject,
+        "to": [p.email for p in to_participants],
+        "cc": [p.email for p in cc_participants],
+        "start": start_local.isoformat(),
+        "end": end_local.isoformat(),
+        "timezone": args.timezone_name,
+        "zoom_join_url": meeting.join_url,
+        "zoom_meeting_id": meeting.meeting_id,
+        "message_id": message_id,
+    }) + "\n")
+    print(" - event_uid:", event_uid)
 
 
 if __name__ == "__main__":

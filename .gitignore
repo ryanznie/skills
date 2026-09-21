@@ -5,6 +5,8 @@
 # Environment / Secrets
 .env
 .env.*
+.event-log.jsonl
+plugins/calendar-skills/skills/ai-scheduler/.event-log.jsonl
 !.env.*.example
 plugins/calendar-skills/skills/google-calendar-sync/token.json
 plugins/calendar-skills/skills/google-calendar-sync/client_secret_*.json
