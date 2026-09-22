@@ -10,6 +10,8 @@ It can connect to OpenClaw or ZeroClaw through the same plugin and skill layout.
 
 ![Telegram demo showing a calendar event created from a chat message](assets/openclaw-zero-claw-demo.png)
 
+![Agent Calendar Skills demo invite](assets/Screenshot%202026-09-22%20at%2011.18.00%E2%80%AFAM.png)
+
 ## Installation
 
 ### Claude Code
