@@ -2,53 +2,15 @@
 
 Schedules Zoom meetings and emails `.ics` invites via AgentMail.
 
-## Quick Start
-- Skill docs: `SKILL.md`
-- Script: `scripts/schedule_zoom_and_send_invite.py`
-- Update script: `scripts/send_calendar_update.py`
-- Env file: `.env.scheduler` (copy from `.env.scheduler.example`)
+## Documentation
 
-### Setup Environment
-Use the dedicated AgentMail environment that this repo already uses for live Zoom + AgentMail runs:
+- [Skill instructions](SKILL.md)
+- [Developer setup and CLI reference](docs/DEV_SETUP.md)
+- [Changelog](../../CHANGELOG.md)
 
-```sh
-# If you need to create it from scratch:
-python3 -m venv .venv_agentmail
-. .venv_agentmail/bin/activate
-pip install httpx agentmail
+## Components
 
-# For normal use:
-. .venv_agentmail/bin/activate
-```
-
-Example:
-
-```sh
-cd plugins/calendar-skills/skills/ai-scheduler
-. .venv_agentmail/bin/activate
-.venv_agentmail/bin/python scripts/schedule_zoom_and_send_invite.py \
-  --topic "Project Sync" \
-  --chat-topic "Bi-weekly project update and roadmap discussion" \
-  --to "Jane Doe <jane.doe@example.com>" \
-  --cc "team-leads@example.com" \
-  --start "2026-03-15 14:00" \
-  --tz "America/New_York" \
-  --duration 30
-```
-
-To update an existing invite, use `send_calendar_update.py` with the original event UID and a higher sequence number. This supports in-person locations and does not create a Zoom meeting.
-
-## Zoom Credentials
-To obtain `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, and `ZOOM_CLIENT_SECRET`, create a Zoom Server-to-Server OAuth app:
-
-1. Sign in to the Zoom App Marketplace.
-2. Create a new app of type "Server-to-Server OAuth".
-3. In the app's "App Credentials" page, copy the Account ID, Client ID, and Client Secret.
-4. Ensure the app has the required meeting scopes (at least `meeting:write` and `meeting:read`) and is activated.
-
-## AgentMail Credentials
-To obtain `AGENTMAIL_API_KEY` and an inbox for `AGENTMAIL_INBOX_ID`:
-
-1. Go to AgentMail at `agentmail.to` and sign up.
-2. Create an inbox from the dashboard.
-3. Copy the inbox ID and API key into `.env.scheduler`.
+- `scripts/schedule_zoom_and_send_invite.py` — creates Zoom meetings and sends invites
+- `scripts/send_calendar_update.py` — updates existing `.ics` events, including in-person events
+- `.env.scheduler.example` — credential configuration template
+- `.event-log.jsonl` — local, gitignored event metadata log
