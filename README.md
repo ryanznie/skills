@@ -84,15 +84,4 @@ Each skill can include its own `scripts/`, `references/`, `assets/`, `templates/
 
 ## Releases
 
-Each plugin keeps its own semver in its `plugin.json`. The release flow uses a single workflow:
-
-- [release.yml](.github/workflows/release.yml) publishes tags and performs the GitHub release for the selected plugin
-
-Tag format:
-
-- immutable patch tag: `vX.Y.Z+<plugin>`
-- mutable minor tag: `vX.Y+<plugin>`
-
-The release workflow lets you choose a semver bump, updates that plugin's `plugin.json`, creates both tags, checks out the tagged commit in a release job, and publishes the GitHub release from that exact version.
-
-To run the workflow successfully, add a `RELEASE_TOKEN` repository secret with permission to create tags and GitHub releases.
+Release procedures, tag conventions, and workflow requirements are documented in [docs/DEV_SETUP.md](docs/DEV_SETUP.md).
