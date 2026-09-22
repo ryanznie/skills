@@ -46,13 +46,7 @@ npx skills add ryanznie/skills
 
 ### Local development
 
-```bash
-git clone git@github.com:ryanznie/skills.git
-cd <repo-dir>
-claude --plugin-dir ./plugins/calendar-skills
-```
-
-To work on a different plugin in this repo, point `claude --plugin-dir` at that plugin's directory under `plugins/`.
+See [docs/DEV_SETUP.md](docs/DEV_SETUP.md) for cloning, local plugin loading, Python setup, testing, and release procedures.
 
 ## Available Plugins
 
@@ -87,17 +81,6 @@ assets/openclaw-zero-claw-demo.png
 ```
 
 Each skill can include its own `scripts/`, `references/`, `assets/`, `templates/`, or `agents/` directories as needed.
-
-## Python Setup
-
-This repo uses `uv` for Python dependency management and execution.
-
-```bash
-cd /path/to/skills
-uv sync
-```
-
-Run repo Python entrypoints with `uv run ...`.
 
 ## Releases
 
