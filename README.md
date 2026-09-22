@@ -6,11 +6,19 @@ This repository can host multiple plugins. Right now it contains `calendar-skill
 
 It can connect to OpenClaw or ZeroClaw through the same plugin and skill layout.
 
-## Demo
+## Demos
 
-![Telegram demo showing a calendar event created from a chat message](assets/openclaw-zero-claw-demo.png)
+### OpenClaw / ZeroClaw calendar workflow
 
-![Agent Calendar Skills demo invite](assets/agent-calendar-skills-demo.png)
+<p>
+  <img src="assets/openclaw-zero-claw-demo.png" alt="Telegram demo showing a calendar event created from a chat message" width="720">
+</p>
+
+### Agent Calendar Skills invite
+
+<p>
+  <img src="assets/agent-calendar-skills-demo.png" alt="Agent Calendar Skills demo invite" width="520">
+</p>
 
 ## Installation
 
