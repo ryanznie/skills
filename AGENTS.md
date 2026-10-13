@@ -30,6 +30,8 @@ When cutting a release, the workflow must:
 - check out the immutable patch tag in the release job
 - publish the GitHub release from the immutable patch tag
 
+Before starting a release, keep `plugins/<plugin-name>/.claude-plugin/plugin.json` on the default branch set to the latest published version tag for that plugin. The workflow reads this file as its starting version and applies the selected bump. It updates the manifest in the tagged release commit, but does not push that version-bump commit back to the default branch. If the manifest is stale, the workflow can calculate a version whose immutable tag already exists and fail. For example, when the latest release is `v0.2.0+calendar-skills`, set the manifest to `0.2.0` before selecting a patch bump for `0.2.1`.
+
 Preferred practice is to bump `plugin.json` as part of the normal edit that changes the plugin, rather than creating a separate release PR just to record the version. The release workflow should never create a PR for version bookkeeping.
 
 The workflows expect a `RELEASE_TOKEN` secret with permission to create tags and GitHub releases.
