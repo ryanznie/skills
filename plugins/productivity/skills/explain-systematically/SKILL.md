@@ -24,6 +24,8 @@ Assume a curious beginner unless the user names another audience. Choose one con
 
 Put this narrative in the first, default **Short story** tab. Write it in the direct, memorable style of a colleague explaining a system at a whiteboard: short paragraphs, plain words, concrete stakes, and explicit cause-and-effect transitions. Aim for about 100–180 words for an ordinary overview, with one to three short sentences per beat; treat that as a guide, not a cap. Let the story run longer when needed to explain a key mechanism or preserve a necessary cause-and-effect step. Keep the causal links; cut repeated definitions, setup prose, marketing language, and tangents. Do not turn it into a jargon list.
 
+Inside the story tab, add a one-sentence setup immediately after the **The story** label and before its opening heading. Name the specific part of the topic and frame the concrete problem behind the opening question. This bridges the page-wide context to the narrative; keep it distinct from the first story beat, and do not answer the question in advance.
+
 When a concrete example or small diagram would clarify a story beat, place it in a supporting column beside that beat on wide screens. Use this selectively; other beats can remain text-only. On narrow screens, stack each visual beneath its associated beat. Keep visuals explanatory rather than decorative, and give each one a concise text equivalent.
 
 Include a small, clearly labeled **ELI5** callout near the start of the story: one or two sentences using a familiar analogy or everyday language to give the learner an instant mental model. Keep the analogy faithful to the mechanism; briefly name its limit when it could mislead. Do not repeat the whole story in simpler words.
