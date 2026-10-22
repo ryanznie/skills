@@ -7,9 +7,11 @@ description: Create concise, temporary HTML explainers with a causal story, ELI5
 
 This skill makes temporary explainers, not permanent documentation or a website. Use it when someone wants to understand a topic systematically through an HTML lesson. Teach why each idea is needed, how it works, and what question it raises next.
 
-## Set a clear learning goal and establish prerequisites
+## Orient the learner before the story
 
-State one concrete outcome near the start: what the learner should be able to explain, distinguish, or decide by the end. Identify the minimum knowledge the explanation relies on. If there is a meaningful prerequisite, bridge it briefly before depending on it; if there is none, say so in a short line rather than adding a prerequisite lesson. Assume a curious beginner unless the user specifies otherwise.
+Assume a curious beginner unless the user specifies otherwise. Before the tabs and the first story beat, place a compact **Context** block under the page title. In a few short lines, orient the learner: where the topic fits, why it matters, what they should understand by the end, and what prior knowledge (if any) the explanation assumes. Name a useful connection to the surrounding system—what this builds on or what it enables. Leave out items that do not help orient this topic. Keep the block brief; it is a starting map, not another summary or a preamble to the story.
+
+If the explanation relies on a meaningful prerequisite, bridge it briefly before depending on it. If there is none, say so in one short line rather than adding a prerequisite lesson.
 
 ## Lead with the short story
 

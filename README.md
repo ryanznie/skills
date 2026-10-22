@@ -80,7 +80,7 @@ The `productivity` plugin includes:
 | Skill | Domain | Description |
 |-------|--------|-------------|
 | [grill-me](plugins/productivity/skills/grill-me/SKILL.md) | Planning | Interrogate a plan or design until the tradeoffs are clear |
-| [explain-systematically](plugins/productivity/skills/explain-systematically/SKILL.md) | Learning | Create temporary explainers with concise stories, an ELI5, visual maps, and interactive glossaries |
+| [explain-systematically](plugins/productivity/skills/explain-systematically/SKILL.md) | Learning | Create temporary explainers with context before the story, an ELI5, visual maps, and interactive glossaries |
 
 ## Repository Structure
 
