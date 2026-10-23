@@ -1,0 +1,4 @@
+interface:
+  display_name: "Explain Systematically"
+  short_description: "Create temporary HTML explainers with context, stories, ELI5s, maps, and glossaries"
+  default_prompt: "Use $explain-systematically to create a temporary HTML explainer with a brief context section before the story, plus an ELI5, visual map, and interactive glossary."
