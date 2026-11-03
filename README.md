@@ -63,7 +63,7 @@ See [docs/DEV_SETUP.md](docs/DEV_SETUP.md) for cloning, local plugin loading, Py
 | Plugin | Description |
 |--------|-------------|
 | `calendar-skills` | Zoom scheduling, Apple Calendar sync, and Google Calendar sync |
-| `productivity` | Systematic learning and rigorous plan review |
+| `productivity` | Systematic learning, rigorous plan review, and ambitious task planning |
 
 ## Current Skills
 
@@ -81,6 +81,7 @@ The `productivity` plugin includes:
 |-------|--------|-------------|
 | [grill-me](plugins/productivity/skills/grill-me/SKILL.md) | Planning | Interrogate a plan or design until the tradeoffs are clear |
 | [explain-systematically](plugins/productivity/skills/explain-systematically/SKILL.md) | Learning | Create temporary explainers with context before the story, an ELI5, visual maps, and interactive glossaries |
+| [be-ambitious](plugins/productivity/skills/be-ambitious/SKILL.md) | Planning | Raise the goal, standard, or perspective for a task, then plan and do the work |
 
 ## Repository Structure
 
